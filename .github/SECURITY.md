@@ -8,4 +8,4 @@ Only the latest major version receives security fixes.
 
 ## Reporting a Vulnerability
 
-If you discover a security vulnerability within :package_name, please send an email to :author_name at :author_email. All security vulnerabilities will be promptly addressed.
+If you discover a security vulnerability within Rybbit Sdk For Laravel, please send an email to Carlo Eusebi at carloeusebi@gmail.com. All security vulnerabilities will be promptly addressed.

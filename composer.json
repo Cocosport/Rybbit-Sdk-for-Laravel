@@ -1,18 +1,18 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "vendor-name/skeleton",
-    "description": "A Laravel package skeleton.",
+    "name": "cocosport/rybbit-sdk-for-laravel",
+    "description": "A simple, elegant Laravel package for integrating Rybbit analytics into your application. This SDK provides a clean, Laravel-native way to track events, page views, and custom analytics data using Rybbit's privacy-friendly, open-source analytics platform",
     "keywords": [
-        "vendor-name",
         "laravel",
-        "skeleton"
+        "cocosport",
+        "rybbit-sdk-for-laravel"
     ],
-    "homepage": "https://github.com/vendor-name/skeleton",
+    "homepage": "https://github.com/cocosport/rybbit-sdk-for-laravel",
     "license": "MIT",
     "authors": [
         {
-            "name": "Author Name",
-            "email": "author@example.com",
+            "name": "Carlo Eusebi",
+            "email": "carloeusebi@gmail.com",
             "role": "Developer"
         }
     ],
@@ -22,10 +22,7 @@
     },
     "require-dev": {
         "larastan/larastan": "^3.9",
-        "laravel/agent-detector": "^2.0",
-        "laravel/chisel": "^0.1",
         "laravel/pint": "^1.29",
-        "laravel/prompts": "^0.3",
         "laravel/pao": "^1.0",
         "orchestra/testbench": "^10.0||^11.0",
         "pestphp/pest": "^4.6||^5.0",
@@ -35,24 +32,18 @@
     },
     "autoload": {
         "psr-4": {
-            "VendorName\\Skeleton\\": "src/"
+            "Rybbit\\Rybbit\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "VendorName\\Skeleton\\Tests\\": "tests/",
+            "Rybbit\\Rybbit\\Tests\\": "tests/",
             "Workbench\\App\\": "workbench/app/",
             "Workbench\\Database\\Factories\\": "workbench/database/factories/",
             "Workbench\\Database\\Seeders\\": "workbench/database/seeders/"
         }
     },
     "scripts": {
-        "post-install-cmd": [
-            "@php configure.php"
-        ],
-        "post-update-cmd": [
-            "@php configure.php"
-        ],
         "post-autoload-dump": [
             "@clear",
             "@prepare"
@@ -96,10 +87,10 @@
     "extra": {
         "laravel": {
             "providers": [
-                "VendorName\\Skeleton\\SkeletonServiceProvider"
+                "Rybbit\\Rybbit\\RybbitServiceProvider"
             ],
             "aliases": {
-                "Skeleton": "VendorName\\Skeleton\\Facades\\Skeleton"
+                "Rybbit": "Rybbit\\Rybbit\\Facades\\Rybbit"
             }
         }
     },

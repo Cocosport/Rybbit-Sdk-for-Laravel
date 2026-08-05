@@ -1,73 +1,60 @@
-# Laravel Package Skeleton
+<div align="center">
+    <h1>Rybbit Sdk For Laravel</h1>
+</div>
 
-A starter template for building beautiful Laravel packages.
+<p align="center">
+    <a href="https://packagist.org/packages/cocosport/rybbit-sdk-for-laravel"><img src="https://img.shields.io/packagist/v/cocosport/rybbit-sdk-for-laravel.svg?style=flat-square" alt="Packagist"></a>
+    <a href="https://packagist.org/packages/cocosport/rybbit-sdk-for-laravel"><img src="https://img.shields.io/packagist/php-v/cocosport/rybbit-sdk-for-laravel.svg?style=flat-square" alt="PHP from Packagist"></a>
+    <a href="https://packagist.org/packages/cocosport/rybbit-sdk-for-laravel"><img src="https://badge.laravel.cloud/badge/cocosport/rybbit-sdk-for-laravel?style=flat" alt="Laravel versions"></a>
+    <a href="https://github.com/cocosport/rybbit-sdk-for-laravel/actions"><img alt="GitHub Workflow Status (main)" src="https://img.shields.io/github/actions/workflow/status/cocosport/rybbit-sdk-for-laravel/tests.yml?branch=main&label=Tests&style=flat-square"></a>
+    <a href="https://packagist.org/packages/cocosport/rybbit-sdk-for-laravel"><img src="https://img.shields.io/packagist/dt/cocosport/rybbit-sdk-for-laravel.svg?style=flat-square" alt="Total Downloads"></a>
+</p>
 
-## Introduction
+A simple, elegant Laravel package for integrating Rybbit analytics into your application. This SDK provides a clean, Laravel-native way to track events, page views, and custom analytics data using Rybbit's privacy-friendly, open-source analytics platform
 
-This skeleton provides everything you need to start building a Laravel package. It comes pre-configured with a service provider, testing via Pest, static analysis via Larastan, code formatting via Pint, and a workbench application for end-to-end development — all wired up and ready to go.
+## Installation
 
-An interactive configuration script personalizes the skeleton for your package during `composer install`, setting up your namespace, service provider, and only the features you need.
-
-## Getting Started
-
-Press the **Use this template** button at the top of this repository to create your package, or clone it directly:
-
-```bash
-git clone https://github.com/laravel/package-skeleton.git my-package
-cd my-package
-```
-
-Then, install your dependencies. The interactive configuration script will run automatically:
+You can install the package via Composer:
 
 ```bash
-composer install
+composer require cocosport/rybbit-sdk-for-laravel
 ```
 
-If you prefer to configure manually, install without scripts and run the configuration separately:
+You may publish all of the package's resources at once:
 
 ```bash
-composer install --no-scripts
-php configure.php
+php artisan vendor:publish --tag="rybbit-sdk-for-laravel"
 ```
 
-Once configured, verify everything is working:
+Or, you may publish each resource individually:
+
+### Publishing the Configuration File
 
 ```bash
-composer test
+php artisan vendor:publish --tag="rybbit-sdk-for-laravel-config"
 ```
 
-You may also boot the included workbench application to test your package end-to-end:
+## Usage
 
-```bash
-composer serve
-```
+<!-- Add a basic usage example here. -->
 
-The workbench app will be available at `http://localhost:8000`.
+## Changelog
 
-## Non-Interactive Configuration
+Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
 
-The configuration script supports non-interactive mode for CI or scripted setups. Pass `--no-interaction` along with any metadata options you'd like to prefill:
+## Contributing
 
-```bash
-php configure.php --no-interaction --config --routes
-```
+Thank you for considering contributing to Rybbit Sdk For Laravel! Please review our [contributing guide](.github/CONTRIBUTING.md) to get started.
 
-Non-interactive mode also activates automatically when the `COMPOSER_NO_INTERACTION=1` environment variable is set, when an AI agent is detected, or when standard input is not an interactive terminal.
+## Security Vulnerabilities
 
-Omitting feature flags includes every package feature; passing specific flags includes only those features. Tools work the same way: omitting tool flags such as `--dependabot` or `--changelog` includes every tool, while passing specific flags includes only those tools.
+Please review [our security policy](.github/SECURITY.md) on how to report security vulnerabilities.
 
-Since the default package description is empty, passing `--package-description` is recommended so the generated `composer.json` is ready to publish.
+## Credits
 
-Non-interactive runs print a single line of JSON describing the result, including the resolved metadata, selected features and tools, and any manual follow-up steps. Invalid metadata options fail with a JSON error before any files are changed.
+- [Carlo Eusebi](https://github.com/cocosport)
+- [All Contributors](../../contributors)
 
-During configuration, `README_PACKAGE.md` and `AGENTS_PACKAGE.md` are customized and moved to `README.md` and `AGENTS.md`, replacing the skeleton files. The script also links `CLAUDE.md` to `AGENTS.md` and `.claude` to `.agents` so both agent formats share the same guidance.
+## License
 
-## After Setup
-
-A few GitHub settings need your attention after creating your package repository:
-
-- Review Dependabot pull requests before merging — this skeleton does not include an automatic merge workflow.
-- Create release-note labels: `breaking`, `enhancement`, `bug`, `documentation`, `dependencies`, `maintenance`, `skip-changelog`, and `duplicate`.
-- Review branch protection for `main` — changelog automation requires GitHub Actions to commit to `CHANGELOG.md` after a release.
-
-No additional repository secrets are required; the included workflows use GitHub's built-in `GITHUB_TOKEN`.
+Rybbit Sdk For Laravel is open-sourced software licensed under the [MIT license](LICENSE.md).
