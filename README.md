@@ -20,6 +20,7 @@ A simple, elegant Laravel package for integrating [Rybbit](https://www.rybbit.io
 - **First-party tunnel** — proxies tracking requests (script, `track`, `identify`, session replay, site config) through your own domain instead of Rybbit's, so the script isn't blocked by ad blockers or browser tracking protections.
 - **Client IP forwarding** — the tunnel resolves the real visitor IP from `X-Forwarded-For` and forwards it to Rybbit, so proxied traffic is still attributed correctly.
 - **Resilient forwarding** — failed tunnel requests are retried, optionally logged, and never cache a failed response; session replay data is forwarded through a queued job so it never blocks the request/response cycle.
+- **`Rybbit::fake()`** — swap in an in-memory fake for your tests, with assertions for every tracking and user-query method and no real HTTP requests made.
 
 ## Installation
 
@@ -173,6 +174,41 @@ RYBBIT_TUNNEL_ENABLED=false
 ```
 
 Customize the local path prefix, cache key prefix, and route middleware via `config/rybbit.php`.
+
+### Testing
+
+Call `Rybbit::fake()` in your tests to swap in an in-memory fake — no real HTTP requests are made, and every call is recorded for assertions:
+
+```php
+use Cocosport\Rybbit\Facades\Rybbit;
+
+Rybbit::fake();
+
+// ... code under test calls Rybbit::track()->pageView(...) or Rybbit::users()->list(...) ...
+
+Rybbit::assertPageViewSent(fn (array $data) => $data['pathname'] === '/checkout');
+Rybbit::assertEventSent('purchase', fn (array $data) => $data['properties']['amount'] === 99.99);
+Rybbit::assertOutboundSent('https://example.com');
+Rybbit::assertErrorSent('TypeError');
+Rybbit::assertNothingSent();
+Rybbit::assertSentCount(2);
+
+// escape hatch for anything not covered above
+Rybbit::assertSent(fn (string $key, array $data) => $key === 'pageview');
+
+// users() side
+Rybbit::assertUsersListed(fn (array $query) => $query['sort_by'] === 'pageviews');
+Rybbit::assertUserRequested('user@example.com');
+Rybbit::assertSessionCountRequested('abc123def456');
+```
+
+Without a stub, faked calls return a sensible default (`['success' => true]` for tracking calls, an empty `data` payload for user queries) so code under test that reads the response doesn't have to handle `null`. Pass stubs keyed by symbolic call name (`pageview`, `custom_event`, `performance`, `outbound`, `error`, `users.list`, `users.sessionCount`, `users.find`) to control what's returned:
+
+```php
+Rybbit::fake([
+    'users.find' => ['data' => ['user_id' => 'abc', 'identified_user_id' => 'user@example.com']],
+]);
+```
 
 ## Changelog
 
