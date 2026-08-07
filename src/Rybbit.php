@@ -16,4 +16,12 @@ class Rybbit
     {
         return app(SendEvents::class);
     }
+
+    /**
+     * Query the configured site's users.
+     */
+    public function users(): Users
+    {
+        return app(Users::class);
+    }
 }

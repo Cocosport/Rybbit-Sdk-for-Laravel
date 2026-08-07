@@ -7,7 +7,6 @@ namespace Cocosport\Rybbit;
 use Cocosport\Rybbit\Exceptions\InvalidConfigurationException;
 use Illuminate\Container\Attributes\Singleton;
 use Illuminate\Http\Client\ConnectionException;
-use Illuminate\Http\Client\RequestException;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -42,16 +41,25 @@ class Client
     }
 
     /**
-     * Send a POST request to Rybbit's API.
+     * Send a POST request to Rybbit's API and return the decoded JSON response.
      *
      * @param  array<string, mixed>  $data
-     *
-     * @throws ConnectionException
-     * @throws RequestException
+     * @return array<string, mixed>|null
      */
-    public function post(string $path, array $data = []): ?Response
+    public function post(string $path, array $data = []): ?array
     {
-        return $this->request('post', $path, $data);
+        return $this->request('post', $path, $data)?->json();
+    }
+
+    /**
+     * Send a GET request to Rybbit's API and return the decoded JSON response.
+     *
+     * @param  array<string, mixed>  $query
+     * @return array<string, mixed>|null
+     */
+    public function get(string $path, array $query = []): ?array
+    {
+        return $this->request('get', $path, $query)?->json();
     }
 
     /**
@@ -89,9 +97,6 @@ class Client
      *
      * @param  string  $method  "post" | "get"
      * @param  array<string, mixed>  $data  Request body (POST) or query parameters (GET).
-     *
-     * @throws ConnectionException
-     * @throws RequestException
      */
     private function request(string $method, string $path, array $data): ?Response
     {

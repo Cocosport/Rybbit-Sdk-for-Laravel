@@ -16,6 +16,7 @@ A simple, elegant Laravel package for integrating [Rybbit](https://www.rybbit.io
 
 - **`@rybbit` Blade directive** — injects the Rybbit tracking script with a single tag, with support for the `data-debounce`, `data-skip-patterns`, and `data-mask-patterns` script options.
 - **Server-side event tracking** — the `Rybbit` facade sends pageviews, custom events, performance metrics, outbound clicks, and errors straight to Rybbit's `/api/track` endpoint from your backend.
+- **User queries** — look up a site's users, a specific user's profile and devices, and their daily session counts through Rybbit's read API.
 - **First-party tunnel** — proxies tracking requests (script, `track`, `identify`, session replay, site config) through your own domain instead of Rybbit's, so the script isn't blocked by ad blockers or browser tracking protections.
 - **Client IP forwarding** — the tunnel resolves the real visitor IP from `X-Forwarded-For` and forwards it to Rybbit, so proxied traffic is still attributed correctly.
 - **Resilient forwarding** — failed tunnel requests are retried, optionally logged, and never cache a failed response; session replay data is forwarded through a queued job so it never blocks the request/response cycle.
@@ -136,7 +137,23 @@ Rybbit::track()->send('pageview', [
 ]);
 ```
 
-Every method returns the `Illuminate\Http\Client\Response`, or `null` if the request couldn't reach Rybbit at all. Failed requests are logged (see `RYBBIT_LOGS`) and, when `RYBBIT_THROW_ON_ERROR` is enabled, raise a `RequestException` or `ConnectionException` instead of failing silently.
+Every method returns the decoded JSON response as an `array` (e.g. `['success' => true]`), or `null` if the request couldn't reach Rybbit at all. Failed requests are logged (see `RYBBIT_LOGS`) and, when `RYBBIT_THROW_ON_ERROR` is enabled, raise a `RequestException` or `ConnectionException` instead of failing silently.
+
+### Querying users
+
+Use `Rybbit::users()` to read a site's [users](https://www.rybbit.io/docs/api/users/list) through Rybbit's API — this always requires `RYBBIT_API_KEY`.
+
+```php
+use Cocosport\Rybbit\Facades\Rybbit;
+
+Rybbit::users()->list(['page' => 1, 'page_size' => 25, 'sort_by' => 'pageviews', 'sort_order' => 'desc']);
+
+Rybbit::users()->sessionCount('abc123def456', ['time_zone' => 'America/New_York']);
+
+Rybbit::users()->find('user@example.com');
+```
+
+`list()` returns every user for the site, paginated; `sessionCount()` returns a user's daily session counts, keyed by date; `find()` returns one user's full profile — traits, locations, devices, and linked devices. Like the tracking methods above, each returns the decoded JSON response as an `array`, or `null` if the request couldn't reach Rybbit at all — see the linked docs for the exact payload shape.
 
 ### The tunnel
 
