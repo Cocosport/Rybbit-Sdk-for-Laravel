@@ -1,6 +1,15 @@
 # Release Notes
 
-## [Unreleased](https://github.com/cocosport/rybbit-sdk-for-laravel/compare/v0.2.0...HEAD)
+## [Unreleased](https://github.com/cocosport/rybbit-sdk-for-laravel/compare/v0.2.1...HEAD)
+
+## [v0.2.1](https://github.com/cocosport/rybbit-sdk-for-laravel/compare/v0.2.0...v0.2.1) - 2026-08-07
+
+### Bug Fixes
+
+- Queued tunnel forwarding (`ForwardTunnelData`) now honors `rybbit.throw_on_error`. A failed upstream response no longer throws unconditionally via the HTTP client's own `retry()` default (`throw: true`), which bypassed the config check entirely. Now matches the synchronous `Tunnel::forward()` behavior, which already passed `throw: false`.
+- `Rybbit::users()` now validates `rybbit.site_seq_id` the same way `rybbit.host` is validated (throws in non-production, logs and fails soft in production). Site-scoped path building (`api/sites/:site/...`) moved into `Client::sitePath()`, so future site-scoped resources get the same validation and path building for free.
+
+**Full Changelog**: https://github.com/cocosport/rybbit-sdk-for-laravel/compare/v0.2.0...v0.2.1
 
 ## [v0.2.0](https://github.com/cocosport/rybbit-sdk-for-laravel/compare/v0.1.0...v0.2.0) - 2026-08-07
 
