@@ -39,6 +39,7 @@ A simple, elegant Laravel package for integrating [Rybbit](https://www.rybbit.io
 - **Client IP forwarding** — the tunnel resolves the real visitor IP from `X-Forwarded-For` and forwards it to Rybbit, so proxied traffic is still attributed correctly.
 - **Resilient forwarding** — failed tunnel requests are retried, optionally logged, and never cache a failed response; session replay data is forwarded through a queued job so it never blocks the request/response cycle.
 - **`Rybbit::fake()`** — swap in an in-memory fake for your tests, with assertions for every tracking and user-query method and no real HTTP requests made.
+- **Laravel Boost skill** — ships a `rybbit-development` [Agent Skill](https://laravel.com/docs/boost#agent-skills) that [Laravel Boost](https://laravel.com/docs/boost) auto-installs for your AI coding agent when you run `php artisan boost:install`, so it already knows how to use this package correctly.
 
 ## Installation
 
