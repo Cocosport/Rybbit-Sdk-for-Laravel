@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Rybbit\Rybbit\Tests;
+namespace Cocosport\Rybbit\Tests;
 
+use Cocosport\Rybbit\RybbitServiceProvider;
 use Orchestra\Testbench\TestCase as Orchestra;
-use Rybbit\Rybbit\RybbitServiceProvider;
 
 abstract class TestCase extends Orchestra
 {
@@ -14,5 +14,10 @@ abstract class TestCase extends Orchestra
         return [
             RybbitServiceProvider::class,
         ];
+    }
+
+    protected function getEnvironmentSetUp($app): void
+    {
+        $app['config']->set('app.key', 'base64:'.base64_encode(random_bytes(32)));
     }
 }

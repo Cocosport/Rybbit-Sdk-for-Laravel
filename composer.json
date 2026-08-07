@@ -1,106 +1,106 @@
 {
-    "$schema": "https://getcomposer.org/schema.json",
-    "name": "cocosport/rybbit-sdk-for-laravel",
-    "description": "A simple, elegant Laravel package for integrating Rybbit analytics into your application. This SDK provides a clean, Laravel-native way to track events, page views, and custom analytics data using Rybbit's privacy-friendly, open-source analytics platform",
-    "keywords": [
-        "laravel",
-        "cocosport",
-        "rybbit-sdk-for-laravel"
+  "$schema": "https://getcomposer.org/schema.json",
+  "name": "cocosport/rybbit-sdk-for-laravel",
+  "description": "A simple, elegant Laravel package for integrating Rybbit analytics into your application. This SDK provides a clean, Laravel-native way to track events, page views, and custom analytics data using Rybbit's privacy-friendly, open-source analytics platform",
+  "keywords": [
+    "laravel",
+    "cocosport",
+    "rybbit-sdk-for-laravel"
+  ],
+  "homepage": "https://github.com/cocosport/rybbit-sdk-for-laravel",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Carlo Eusebi",
+      "email": "carloeusebi@gmail.com",
+      "role": "Developer"
+    }
+  ],
+  "require": {
+    "php": "^8.3",
+    "illuminate/support": "^12.0||^13.0"
+  },
+  "require-dev": {
+    "larastan/larastan": "^3.9",
+    "laravel/pint": "^1.29",
+    "laravel/pao": "^1.0",
+    "orchestra/testbench": "^10.0||^11.0",
+    "pestphp/pest": "^4.6||^5.0",
+    "pestphp/pest-plugin-laravel": "^4.1||^5.0",
+    "pestphp/pest-plugin-type-coverage": "^4.0||^5.0",
+    "phpstan/extension-installer": "^1.4"
+  },
+  "autoload": {
+    "psr-4": {
+      "Cocosport\\Rybbit\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Cocosport\\Rybbit\\Tests\\": "tests/",
+      "Workbench\\App\\": "workbench/app/",
+      "Workbench\\Database\\Factories\\": "workbench/database/factories/",
+      "Workbench\\Database\\Seeders\\": "workbench/database/seeders/"
+    }
+  },
+  "scripts": {
+    "post-autoload-dump": [
+      "@clear",
+      "@prepare"
     ],
-    "homepage": "https://github.com/cocosport/rybbit-sdk-for-laravel",
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "Carlo Eusebi",
-            "email": "carloeusebi@gmail.com",
-            "role": "Developer"
-        }
+    "prepare": [
+      "@php vendor/bin/testbench package:discover --ansi"
     ],
-    "require": {
-        "php": "^8.3",
-        "illuminate/support": "^12.0||^13.0"
-    },
-    "require-dev": {
-        "larastan/larastan": "^3.9",
-        "laravel/pint": "^1.29",
-        "laravel/pao": "^1.0",
-        "orchestra/testbench": "^10.0||^11.0",
-        "pestphp/pest": "^4.6||^5.0",
-        "pestphp/pest-plugin-laravel": "^4.1||^5.0",
-        "pestphp/pest-plugin-type-coverage": "^4.0||^5.0",
-        "phpstan/extension-installer": "^1.4"
-    },
-    "autoload": {
-        "psr-4": {
-            "Rybbit\\Rybbit\\": "src/"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "Rybbit\\Rybbit\\Tests\\": "tests/",
-            "Workbench\\App\\": "workbench/app/",
-            "Workbench\\Database\\Factories\\": "workbench/database/factories/",
-            "Workbench\\Database\\Seeders\\": "workbench/database/seeders/"
-        }
-    },
-    "scripts": {
-        "post-autoload-dump": [
-            "@clear",
-            "@prepare"
-        ],
-        "prepare": [
-            "@php vendor/bin/testbench package:discover --ansi"
-        ],
-        "build": [
-            "@php vendor/bin/testbench workbench:build --ansi"
-        ],
-        "serve": [
-            "Composer\\Config::disableProcessTimeout",
-            "@build",
-            "@php vendor/bin/testbench serve --ansi"
-        ],
-        "lint": [
-            "vendor/bin/pint --parallel"
-        ],
-        "lint:check": [
-            "vendor/bin/pint --parallel --test"
-        ],
-        "analyse": [
-            "vendor/bin/phpstan analyse"
-        ],
-        "test:types": [
-            "vendor/bin/pest --type-coverage --min=100"
-        ],
-        "test:unit": [
-            "vendor/bin/pest --parallel"
-        ],
-        "test": [
-            "@analyse",
-            "@lint:check",
-            "@test:types",
-            "@test:unit"
-        ],
-        "clear": [
-            "@php vendor/bin/testbench package:purge-skeleton --ansi"
-        ]
-    },
-    "extra": {
-        "laravel": {
-            "providers": [
-                "Rybbit\\Rybbit\\RybbitServiceProvider"
-            ],
-            "aliases": {
-                "Rybbit": "Rybbit\\Rybbit\\Facades\\Rybbit"
-            }
-        }
-    },
-    "config": {
-        "sort-packages": true,
-        "allow-plugins": {
-            "pestphp/pest-plugin": true,
-            "phpstan/extension-installer": true
-        }
-    },
-    "minimum-stability": "stable",
-    "prefer-stable": true
+    "build": [
+      "@php vendor/bin/testbench workbench:build --ansi"
+    ],
+    "serve": [
+      "Composer\\Config::disableProcessTimeout",
+      "@build",
+      "@php vendor/bin/testbench serve --ansi"
+    ],
+    "lint": [
+      "vendor/bin/pint --parallel"
+    ],
+    "lint:check": [
+      "vendor/bin/pint --parallel --test"
+    ],
+    "analyse": [
+      "vendor/bin/phpstan analyse"
+    ],
+    "test:types": [
+      "vendor/bin/pest --type-coverage --min=100"
+    ],
+    "test:unit": [
+      "vendor/bin/pest --parallel --compact"
+    ],
+    "test": [
+      "@analyse",
+      "@lint:check",
+      "@test:types",
+      "@test:unit"
+    ],
+    "clear": [
+      "@php vendor/bin/testbench package:purge-skeleton --ansi"
+    ]
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Cocosport\\Rybbit\\RybbitServiceProvider"
+      ],
+      "aliases": {
+        "Rybbit": "Cocosport\\Rybbit\\Facades\\Rybbit"
+      }
+    }
+  },
+  "config": {
+    "sort-packages": true,
+    "allow-plugins": {
+      "pestphp/pest-plugin": true,
+      "phpstan/extension-installer": true
+    }
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true
 }

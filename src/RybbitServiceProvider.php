@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Rybbit\Rybbit;
+namespace Cocosport\Rybbit;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\View\Compilers\BladeCompiler;
 
 class RybbitServiceProvider extends ServiceProvider
 {
@@ -13,7 +14,11 @@ class RybbitServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->mergeConfigFrom(__DIR__.'/../config/rybbit-sdk-for-laravel.php', 'rybbit-sdk-for-laravel');
+        $this->mergeConfigFrom(__DIR__.'/../config/rybbit.php', 'rybbit');
+
+        $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
+
+        $this->registerBladeDirectives();
 
         $this->app->singleton(Rybbit::class);
     }
@@ -28,7 +33,14 @@ class RybbitServiceProvider extends ServiceProvider
         }
 
         $this->publishes([
-            __DIR__.'/../config/rybbit-sdk-for-laravel.php' => config_path('rybbit-sdk-for-laravel.php'),
-        ], ['rybbit-sdk-for-laravel', 'rybbit-sdk-for-laravel-config']);
+            __DIR__.'/../config/rybbit.php' => config_path('rybbit.php'),
+        ], ['rybbit', 'rybbit-config']);
+    }
+
+    protected function registerBladeDirectives(): void
+    {
+        $this->callAfterResolving('blade.compiler', function (BladeCompiler $blade) {
+            $blade->directive('rybbit', [Directive::class, 'injectedScript']);
+        });
     }
 }

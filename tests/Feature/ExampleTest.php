@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Rybbit\Rybbit\Rybbit;
+use Cocosport\Rybbit\Rybbit;
 
 it('resolves the singleton', function () {
     expect(app(Rybbit::class))->toBeInstanceOf(Rybbit::class);
@@ -13,5 +13,5 @@ it('returns the same instance from the container', function () {
 });
 
 it('merges the package config', function () {
-    expect(config('rybbit-sdk-for-laravel.placeholder'))->toBe('default');
+    expect(config('rybbit.host'))->toBe('https://rybbit.io');
 });

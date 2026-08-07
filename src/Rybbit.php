@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Rybbit\Rybbit;
+namespace Cocosport\Rybbit;
 
 class Rybbit
 {
