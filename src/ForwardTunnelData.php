@@ -31,7 +31,7 @@ class ForwardTunnelData implements ShouldQueue
     public function handle(): void
     {
         $pendingRequest = Http::withHeaders($this->headers)
-            ->retry(5, 3000);
+            ->retry(5, 3000, throw: false);
 
         if ($this->method === 'POST') {
             $response = $pendingRequest->post($this->url, $this->data);
