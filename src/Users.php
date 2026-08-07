@@ -41,26 +41,32 @@ class Users
      *         pageSize: int,
      *     }
      *
-     * @param  array{
-     *     page?: int,
-     *     page_size?: int,
-     *     sort_by?: "first_seen"|"last_seen"|"pageviews"|"sessions"|"events",
-     *     sort_order?: "asc"|"desc",
-     *     identified_only?: "true"|"false",
-     *     ...
-     * }  $query  page: 1-indexed page number (default 1).
-     *            page_size: results per page (default 100).
-     *            sort_by: field to sort by (default "last_seen").
-     *            sort_order: sort direction (default "desc").
-     *            identified_only: only return users with an identified_user_id (default "false").
-     *            Also accepts the API's common parameters (date range, timezone, filters, ...).
+     * @param  int  $page  1-indexed page number.
+     * @param  int  $pageSize  Results per page.
+     * @param  string  $sortBy  "first_seen" | "last_seen" | "pageviews" | "sessions" | "events"
+     * @param  string  $sortOrder  "asc" | "desc"
+     * @param  bool  $identifiedOnly  Only return users with an identified_user_id.
+     * @param  array<string, mixed>  $query  Additional query parameters, merged over the ones above.
+     *                                       Also accepts the API's common parameters (date range, timezone, filters, ...).
      * @return array<string, mixed>|null
      *
      * @see https://rybbit.com/docs/api/users/list
      */
-    public function list(array $query = []): ?array
-    {
-        return $this->client->get($this->client->sitePath('users'), $query);
+    public function list(
+        int $page = 1,
+        int $pageSize = 100,
+        string $sortBy = 'last_seen',
+        string $sortOrder = 'desc',
+        bool $identifiedOnly = false,
+        array $query = [],
+    ): ?array {
+        return $this->client->get($this->client->sitePath('users'), array_merge([
+            'page' => $page,
+            'page_size' => $pageSize,
+            'sort_by' => $sortBy,
+            'sort_order' => $sortOrder,
+            'identified_only' => $identifiedOnly ? 'true' : 'false',
+        ], $query));
     }
 
     /**

@@ -19,7 +19,7 @@ it('lists users for the configured site', function () {
         'pageSize' => 10,
     ])]);
 
-    $response = app(Rybbit::class)->users()->list(['page' => 2, 'sort_by' => 'pageviews', 'sort_order' => 'asc']);
+    $response = app(Rybbit::class)->users()->list(page: 2, sortBy: 'pageviews', sortOrder: 'asc');
 
     Http::assertSent(fn ($request) => str_starts_with($request->url(), 'https://rybbit.io/api/sites/1/users')
         && $request->method() === 'GET'

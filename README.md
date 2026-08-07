@@ -181,7 +181,7 @@ Use `Rybbit::users()` to read a site's [users](https://www.rybbit.io/docs/api/us
 ```php
 use Cocosport\Rybbit\Facades\Rybbit;
 
-Rybbit::users()->list(['page' => 1, 'page_size' => 25, 'sort_by' => 'pageviews', 'sort_order' => 'desc']);
+Rybbit::users()->list(page: 1, pageSize: 25, sortBy: 'pageviews', sortOrder: 'desc');
 
 Rybbit::users()->sessionCount('abc123def456', ['time_zone' => 'America/New_York']);
 

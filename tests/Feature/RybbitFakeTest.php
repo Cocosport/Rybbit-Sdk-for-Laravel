@@ -84,7 +84,7 @@ it('asserts via the generic assertSent escape hatch', function () {
 it('asserts a users list request was sent', function () {
     Rybbit::fake();
 
-    Rybbit::users()->list(['sort_by' => 'pageviews']);
+    Rybbit::users()->list(sortBy: 'pageviews');
 
     Rybbit::assertUsersListed(fn (array $query) => $query['sort_by'] === 'pageviews');
 });
