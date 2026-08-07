@@ -12,6 +12,24 @@
 
 A simple, elegant Laravel package for integrating [Rybbit](https://www.rybbit.io) analytics into your application. This SDK provides a clean, Laravel-native way to add Rybbit's privacy-friendly, open-source analytics to your app.
 
+## Table of Contents
+
+- [Features](#features)
+- [Installation](#installation)
+  - [Publishing the Configuration File](#publishing-the-configuration-file)
+- [Configuration](#configuration)
+- [Usage](#usage)
+  - [Injecting the tracking script](#injecting-the-tracking-script)
+  - [Sending events server-side](#sending-events-server-side)
+  - [Querying users](#querying-users)
+  - [The tunnel](#the-tunnel)
+  - [Testing](#testing)
+- [Changelog](#changelog)
+- [Contributing](#contributing)
+- [Security Vulnerabilities](#security-vulnerabilities)
+- [Credits](#credits)
+- [License](#license)
+
 ## Features
 
 - **`@rybbit` Blade directive** — injects the Rybbit tracking script with a single tag, with support for the `data-debounce`, `data-tag`, `data-skip-patterns`, `data-mask-patterns`, and session replay script options.
