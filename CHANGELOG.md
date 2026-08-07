@@ -1,6 +1,21 @@
 # Release Notes
 
-## [Unreleased](https://github.com/cocosport/rybbit-sdk-for-laravel/compare/v0.2.1...HEAD)
+## [Unreleased](https://github.com/cocosport/rybbit-sdk-for-laravel/compare/v0.2.2...HEAD)
+
+## [v0.2.2](https://github.com/cocosport/rybbit-sdk-for-laravel/compare/v0.2.1...v0.2.2) - 2026-08-07
+
+<!-- Release notes generated using configuration in .github/release.yml at main -->
+### What's Changed
+
+#### Other Changes
+
+* Replace Users::list() array $query with explicit named parameters by @carloeusebi in https://github.com/Cocosport/Rybbit-Sdk-for-Laravel/pull/1
+
+### New Contributors
+
+* @carloeusebi made their first contribution in https://github.com/Cocosport/Rybbit-Sdk-for-Laravel/pull/1
+
+**Full Changelog**: https://github.com/Cocosport/Rybbit-Sdk-for-Laravel/compare/v0.2.1...v0.2.2
 
 ## [v0.2.1](https://github.com/cocosport/rybbit-sdk-for-laravel/compare/v0.2.0...v0.2.1) - 2026-08-07
 
