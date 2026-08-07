@@ -48,7 +48,7 @@ Every method returns the decoded JSON response as an `array`, or `null` if the r
 Use `Rybbit::users()` to read analytics data back out — this always requires `RYBBIT_API_KEY`:
 
 ```php
-Rybbit::users()->list(['page' => 1, 'sort_by' => 'pageviews', 'sort_order' => 'desc']);
+Rybbit::users()->list(page: 1, sortBy: 'pageviews', sortOrder: 'desc');
 Rybbit::users()->sessionCount('abc123def456', ['time_zone' => 'America/New_York']);
 Rybbit::users()->find('user@example.com');
 ```
