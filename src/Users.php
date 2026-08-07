@@ -60,7 +60,7 @@ class Users
      */
     public function list(array $query = []): ?array
     {
-        return $this->client->get($this->path('users'), $query);
+        return $this->client->get($this->client->sitePath('users'), $query);
     }
 
     /**
@@ -88,7 +88,7 @@ class Users
     public function sessionCount(string $userId, array $query = []): ?array
     {
         return $this->client->get(
-            $this->path('users/session-count'),
+            $this->client->sitePath('users/session-count'),
             array_merge([
                 'time_zone' => config('app.timezone'),
             ], $query, [
@@ -176,11 +176,6 @@ class Users
      */
     public function find(string $userId): ?array
     {
-        return $this->client->get($this->path('users/'.rawurlencode($userId)));
-    }
-
-    private function path(string $suffix): string
-    {
-        return 'api/sites/'.config('rybbit.site_seq_id')."/$suffix";
+        return $this->client->get($this->client->sitePath('users/'.rawurlencode($userId)));
     }
 }

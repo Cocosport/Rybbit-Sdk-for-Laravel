@@ -26,6 +26,20 @@ it('throws when the host is not a valid url', function () {
     app(Client::class);
 })->throws(InvalidConfigurationException::class, 'The "rybbit.host" configuration value [not-a-url] is not a valid URL.');
 
+it('throws when the site_seq_id is missing', function () {
+    config()->set('rybbit.host', 'https://rybbit.io');
+    config()->set('rybbit.site_seq_id', null);
+
+    app(Client::class);
+})->throws(InvalidConfigurationException::class, 'The "rybbit.site_seq_id" configuration value is missing. Set RYBBIT_SITE_SEQ_ID in your .env file.');
+
+it('builds a site-scoped path', function () {
+    config()->set('rybbit.host', 'https://rybbit.io');
+    config()->set('rybbit.site_seq_id', '42');
+
+    expect(app(Client::class)->sitePath('users'))->toBe('api/sites/42/users');
+});
+
 it('logs instead of throwing when misconfigured in production', function () {
     $this->app['env'] = 'production';
     config()->set('rybbit.host', null);

@@ -31,6 +31,11 @@ class FakeClient extends Client
         return $this->record('get', $path, $query);
     }
 
+    public function sitePath(string $suffix): string
+    {
+        return "api/sites/fake/$suffix";
+    }
+
     /**
      * @return list<array{method: string, path: string, key: string, data: array<string, mixed>}>
      */

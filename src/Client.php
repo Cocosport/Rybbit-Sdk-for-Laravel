@@ -21,6 +21,8 @@ class Client
 
     private readonly ?string $apiKey;
 
+    private readonly ?string $siteSeqId;
+
     private readonly bool $logsEnabled;
 
     private readonly bool $throwOnError;
@@ -34,6 +36,7 @@ class Client
     {
         $this->host = config('rybbit.host');
         $this->apiKey = config('rybbit.api_key');
+        $this->siteSeqId = config('rybbit.site_seq_id');
         $this->logsEnabled = (bool) config('rybbit.logs');
         $this->throwOnError = (bool) config('rybbit.throw_on_error');
 
@@ -63,6 +66,14 @@ class Client
     }
 
     /**
+     * Build a path scoped to the configured site, e.g. "api/sites/1/users".
+     */
+    public function sitePath(string $suffix): string
+    {
+        return "api/sites/$this->siteSeqId/$suffix";
+    }
+
+    /**
      * @throws InvalidConfigurationException
      */
     private function validateConfiguration(): void
@@ -74,6 +85,10 @@ class Client
 
             if (filter_var($this->host, FILTER_VALIDATE_URL) === false) {
                 throw InvalidConfigurationException::invalidHost($this->host);
+            }
+
+            if (blank($this->siteSeqId)) {
+                throw InvalidConfigurationException::missingSiteSeqId();
             }
         } catch (InvalidConfigurationException $exception) {
             if (! app()->isProduction()) {
