@@ -62,6 +62,44 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | User
+    |--------------------------------------------------------------------------
+    |
+    | Controls how Rybbit::track()->send() resolves user_id from the
+    | authenticated user. Leave both unset to use the default guard's
+    | getAuthIdentifier() (the primary key).
+    |
+    */
+
+    'user' => [
+
+        /*
+        |----------------------------------------------------------------------
+        | Guard
+        |----------------------------------------------------------------------
+        |
+        | The auth guard to resolve the authenticated user from. Leave unset
+        | to use the application's default guard.
+        |
+        */
+
+        'guard' => env('RYBBIT_USER_GUARD'),
+
+        /*
+        |----------------------------------------------------------------------
+        | Key
+        |----------------------------------------------------------------------
+        |
+        | The attribute or method to read user_id from, e.g. "uuid" or
+        | "publicKey". Leave unset to use the user's getAuthIdentifier().
+        |
+        */
+
+        'key' => env('RYBBIT_USER_KEY'),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Script
     |--------------------------------------------------------------------------
     |

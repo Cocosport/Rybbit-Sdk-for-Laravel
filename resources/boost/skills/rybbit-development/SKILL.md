@@ -41,6 +41,8 @@ Rybbit::track()->error('TypeError', 'Cannot read property of undefined');
 
 Every method returns the decoded JSON response as an `array`, or `null` if the request couldn't reach Rybbit — never assume a `Response` object or that the result is non-null. For a type not covered by a dedicated method, call `Rybbit::track()->send($type, $data)` directly.
 
+`pathname`, `hostname`, `user_agent`, `ip_address`, and `querystring` default to the current request, and `user_id` defaults to the authenticated user's ID — don't manually pass these unless overriding them. If the app needs a different auth guard or a non-default identifier (e.g. a UUID or a custom method like `publicKey()`), configure `RYBBIT_USER_GUARD` / `RYBBIT_USER_KEY` (or `rybbit.user.guard` / `rybbit.user.key`) instead of passing `user_id` on every call.
+
 ## Querying users
 
 Use `Rybbit::users()` to read analytics data back out — this always requires `RYBBIT_API_KEY`:

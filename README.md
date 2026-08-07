@@ -160,8 +160,16 @@ Each method accepts an optional trailing `array $data` of additional top-level f
 ```php
 Rybbit::track()->send('pageview', [
     'pathname' => '/checkout',
-    'user_id' => $user->id,
 ]);
+```
+
+`pathname`, `hostname`, `user_agent`, `ip_address`, and `querystring` default to the current request, and `user_id` defaults to the authenticated user's ID — so a call made from a controller or middleware doesn't need to repeat them. Pass any of them in `$data` to override, and they're dropped entirely when empty (e.g. `user_id` when nobody's authenticated, or when running outside an HTTP request).
+
+Configure how `user_id` is resolved via `RYBBIT_USER_GUARD` (which auth guard to check) and `RYBBIT_USER_KEY` (an attribute or method to read off the resolved user, e.g. `uuid` or `publicKey`, instead of the default `getAuthIdentifier()`):
+
+```env
+RYBBIT_USER_GUARD=admin
+RYBBIT_USER_KEY=publicKey
 ```
 
 Every method returns the decoded JSON response as an `array` (e.g. `['success' => true]`), or `null` if the request couldn't reach Rybbit at all. Failed requests are logged (see `RYBBIT_LOGS`) and, when `RYBBIT_THROW_ON_ERROR` is enabled, raise a `RequestException` or `ConnectionException` instead of failing silently.

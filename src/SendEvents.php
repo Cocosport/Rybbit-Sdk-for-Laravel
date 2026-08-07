@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Cocosport\Rybbit;
 
+use Illuminate\Support\Facades\Auth;
+
 /**
  * @see https://rybbit.com/docs/api/sending-events
  */
@@ -17,6 +19,11 @@ class SendEvents
      * Send a tracking event to Rybbit's /api/track endpoint.
      *
      * Resolves to {success: bool} on success, or {success: false, error: string, details: {fieldErrors: object, formErrors: string[]}} on validation failure.
+     *
+     * pathname, hostname, user_id, user_agent, ip_address, and querystring default to the
+     * current request/authenticated user and are dropped when empty. Pass any of them in
+     * $data to override. user_id's guard and resolution key are configurable via
+     * config('rybbit.user.guard') and config('rybbit.user.key').
      *
      * @param  string  $type  "pageview" | "custom_event" | "performance" | "outbound" | "error"
      * @param  array{
@@ -35,21 +42,47 @@ class SendEvents
      *     properties?: array<string, mixed>|string,
      *     feature_flags?: array<string, string>,
      *     ...
-     * }  $data  Additional /api/track request fields, merged over the site_id/type defaults.
+     * }  $data  Additional /api/track request fields, merged over the defaults below.
      * @return array<string, mixed>|null
      */
     public function send(string $type, array $data = []): ?array
     {
-        $payload = array_merge([
+        $payload = array_filter(array_merge([
             'site_id' => (string) config('rybbit.site_seq_id'),
             'type' => $type,
-        ], $data);
+            'pathname' => request()->getPathInfo(),
+            'hostname' => request()->getHost(),
+            'user_id' => $this->resolveUserId(),
+            'user_agent' => request()->userAgent(),
+            'ip_address' => request()->ip(),
+            'querystring' => request()->getQueryString(),
+        ], $data));
 
         if (isset($payload['properties']) && is_array($payload['properties'])) {
             $payload['properties'] = json_encode($payload['properties']);
         }
 
         return $this->client->post('api/track', $payload);
+    }
+
+    /**
+     * Resolve the default user_id from config('rybbit.user.guard') and config('rybbit.user.key').
+     */
+    private function resolveUserId(): ?string
+    {
+        $user = Auth::guard(config('rybbit.user.guard'))->user();
+
+        if ($user === null) {
+            return null;
+        }
+
+        $key = config('rybbit.user.key');
+
+        return (string) match (true) {
+            $key === null => $user->getAuthIdentifier(),
+            method_exists($user, $key) => $user->{$key}(),
+            default => data_get($user, $key),
+        };
     }
 
     /**
