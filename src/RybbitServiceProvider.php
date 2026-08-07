@@ -19,8 +19,6 @@ class RybbitServiceProvider extends ServiceProvider
         $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
 
         $this->registerBladeDirectives();
-
-        $this->app->singleton(Rybbit::class);
     }
 
     /**

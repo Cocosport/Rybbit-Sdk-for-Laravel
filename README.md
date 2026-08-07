@@ -15,6 +15,7 @@ A simple, elegant Laravel package for integrating [Rybbit](https://www.rybbit.io
 ## Features
 
 - **`@rybbit` Blade directive** — injects the Rybbit tracking script with a single tag, with support for the `data-debounce`, `data-skip-patterns`, and `data-mask-patterns` script options.
+- **Server-side event tracking** — the `Rybbit` facade sends pageviews, custom events, performance metrics, outbound clicks, and errors straight to Rybbit's `/api/track` endpoint from your backend.
 - **First-party tunnel** — proxies tracking requests (script, `track`, `identify`, session replay, site config) through your own domain instead of Rybbit's, so the script isn't blocked by ad blockers or browser tracking protections.
 - **Client IP forwarding** — the tunnel resolves the real visitor IP from `X-Forwarded-For` and forwards it to Rybbit, so proxied traffic is still attributed correctly.
 - **Resilient forwarding** — failed tunnel requests are retried, optionally logged, and never cache a failed response; session replay data is forwarded through a queued job so it never blocks the request/response cycle.
@@ -108,25 +109,46 @@ RYBBIT_SCRIPT_DEBOUNCE=500
 ></script>
 ```
 
+### Sending events server-side
+
+Use the `Rybbit` facade to send tracking events straight to Rybbit's [`/api/track`](https://www.rybbit.io/docs/api/sending-events) endpoint from your backend — useful for events that don't happen in the browser, like webhook-driven purchases or background jobs. Set `RYBBIT_SITE_SEQ_ID` (your site's internal numeric ID, shown in the Rybbit dashboard) and, for authenticated tracking that bypasses bot detection, `RYBBIT_API_KEY`.
+
+```php
+use Cocosport\Rybbit\Facades\Rybbit;
+
+Rybbit::track()->pageView(['pathname' => '/checkout']);
+
+Rybbit::track()->event('purchase', ['amount' => 99.99, 'currency' => 'USD']);
+
+Rybbit::track()->performance(['lcp' => 1200.5, 'cls' => 0.05]);
+
+Rybbit::track()->outbound('https://example.com', ['text' => 'Example link']);
+
+Rybbit::track()->error('TypeError', 'Cannot read property of undefined', ['fileName' => 'app.js']);
+```
+
+Each method accepts an optional trailing `array $data` of additional top-level fields from the [request body](https://www.rybbit.io/docs/api/sending-events#request-body) (`user_id`, `hostname`, `referrer`, ...). For full control over the payload, or to send a type not covered by a dedicated method, call `send()` directly:
+
+```php
+Rybbit::track()->send('pageview', [
+    'pathname' => '/checkout',
+    'user_id' => $user->id,
+]);
+```
+
+Every method returns the `Illuminate\Http\Client\Response`, or `null` if the request couldn't reach Rybbit at all. Failed requests are logged (see `RYBBIT_LOGS`) and, when `RYBBIT_THROW_ON_ERROR` is enabled, raise a `RequestException` or `ConnectionException` instead of failing silently.
+
 ### The tunnel
 
-Browser tracking scripts and requests are frequently blocked by ad blockers and browser privacy features. To work around this, the package can register routes on your own domain that transparently proxy requests through to Rybbit:
+Browser tracking scripts and requests are frequently blocked by ad blockers and browser privacy features. To work around this, the package registers routes under `RYBBIT_TUNNEL_URL` (default `/rybbit`) that transparently proxy the script, `track`, `identify`, session replay, and site config requests through to Rybbit.
 
-| Method | Route (relative to `RYBBIT_TUNNEL_URL`, default `/rybbit`) | Forwards to    |
-| ------ | ------------------------------------------------------------ | -------------- |
-| GET    | `/script.js`, `/script-full.js`, `/replay.js`, `/metrics.js`  | `api/{script}` (cached) |
-| POST   | `/track`                                                      | `api/track`    |
-| POST   | `/identify`                                                   | `api/identify` |
-| POST   | `/session-replay/record/{siteId}`                             | `api/session-replay/record/{siteId}` (queued) |
-| GET    | `/site/tracking-config/{siteId}`                              | `api/site/tracking-config/{siteId}` (cached) |
-
-The tunnel is enabled by default. Disable it if you'd rather send requests straight to Rybbit:
+It's enabled by default — point the `@rybbit` directive's `src` at your own domain instead of Rybbit's for free. Disable it if you'd rather talk to Rybbit directly:
 
 ```env
 RYBBIT_TUNNEL_ENABLED=false
 ```
 
-You can customize the local path prefix, cache key prefix, and route middleware via `config/rybbit.php`.
+Customize the local path prefix, cache key prefix, and route middleware via `config/rybbit.php`.
 
 ## Changelog
 

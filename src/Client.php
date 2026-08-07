@@ -1,0 +1,131 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Cocosport\Rybbit;
+
+use Cocosport\Rybbit\Exceptions\InvalidConfigurationException;
+use Illuminate\Container\Attributes\Singleton;
+use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\Client\RequestException;
+use Illuminate\Http\Client\Response;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
+
+/**
+ * @internal
+ */
+#[Singleton]
+class Client
+{
+    private readonly ?string $host;
+
+    private readonly ?string $apiKey;
+
+    private readonly bool $logsEnabled;
+
+    private readonly bool $throwOnError;
+
+    private bool $misconfigured = false;
+
+    /**
+     * @throws InvalidConfigurationException
+     */
+    public function __construct()
+    {
+        $this->host = config('rybbit.host');
+        $this->apiKey = config('rybbit.api_key');
+        $this->logsEnabled = (bool) config('rybbit.logs');
+        $this->throwOnError = (bool) config('rybbit.throw_on_error');
+
+        $this->validateConfiguration();
+    }
+
+    /**
+     * Send a POST request to Rybbit's API.
+     *
+     * @param  array<string, mixed>  $data
+     *
+     * @throws ConnectionException
+     * @throws RequestException
+     */
+    public function post(string $path, array $data = []): ?Response
+    {
+        return $this->request('post', $path, $data);
+    }
+
+    /**
+     * @throws InvalidConfigurationException
+     */
+    private function validateConfiguration(): void
+    {
+        try {
+            if (blank($this->host)) {
+                throw InvalidConfigurationException::missingHost();
+            }
+
+            if (filter_var($this->host, FILTER_VALIDATE_URL) === false) {
+                throw InvalidConfigurationException::invalidHost($this->host);
+            }
+        } catch (InvalidConfigurationException $exception) {
+            if (! app()->isProduction()) {
+                throw $exception;
+            }
+
+            if ($this->logsEnabled) {
+                Log::error($exception->getMessage());
+            }
+
+            $this->misconfigured = true;
+        }
+
+        if (blank($this->apiKey) && $this->logsEnabled) {
+            Log::warning('The "rybbit.api_key" configuration value is missing. Server-side tracking will be subject to bot detection and domain validation. Set RYBBIT_API_KEY in your .env file to bypass this.');
+        }
+    }
+
+    /**
+     * Make the actual HTTP request and handle its response.
+     *
+     * @param  string  $method  "post" | "get"
+     * @param  array<string, mixed>  $data  Request body (POST) or query parameters (GET).
+     *
+     * @throws ConnectionException
+     * @throws RequestException
+     */
+    private function request(string $method, string $path, array $data): ?Response
+    {
+        if ($this->misconfigured) {
+            return null;
+        }
+
+        $request = filled($this->apiKey) ? Http::withToken($this->apiKey) : Http::asJson();
+
+        try {
+            $response = $request->$method("$this->host/$path", $data);
+        } catch (ConnectionException $exception) {
+            if ($this->logsEnabled) {
+                Log::warning("Rybbit $path connection error: ".$exception->getMessage(), [
+                    'data' => $data,
+                ]);
+            }
+
+            if ($this->throwOnError) {
+                throw $exception;
+            }
+
+            return null;
+        }
+
+        if ($response->failed() && $this->logsEnabled) {
+            Log::warning("Rybbit $path request failed: ".$response->status(), [
+                'data' => $data,
+                'response' => $response->body(),
+            ]);
+        }
+
+        $response->throwIf($this->throwOnError);
+
+        return $response;
+    }
+}
