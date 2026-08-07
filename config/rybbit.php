@@ -69,48 +69,29 @@ return [
     | tracking script tag. Leave a value unset (null / empty array) to omit
     | its attribute entirely and let Rybbit fall back to its own default.
     |
+    | @see https://rybbit.com/docs/script
+    |
     */
 
     'script' => [
-
-        /*
-        |----------------------------------------------------------------------
-        | Debounce
-        |----------------------------------------------------------------------
-        |
-        | Milliseconds Rybbit waits before sending repeated events (e.g.
-        | rapid pageviews on a single-page app), rendered as data-debounce.
-        |
-        */
-
         'debounce' => env('RYBBIT_SCRIPT_DEBOUNCE'),
-
-        /*
-        |----------------------------------------------------------------------
-        | Skip Patterns
-        |----------------------------------------------------------------------
-        |
-        | Glob-style path patterns Rybbit should never track, rendered as
-        | the JSON-encoded data-skip-patterns attribute. For example,
-        | ['/admin/**'] stops everything under /admin from being tracked.
-        |
-        */
-
         'skip_patterns' => [],
-
-        /*
-        |----------------------------------------------------------------------
-        | Mask Patterns
-        |----------------------------------------------------------------------
-        |
-        | Glob-style path patterns Rybbit should track without recording
-        | identifying details, rendered as the JSON-encoded
-        | data-mask-patterns attribute. For example, a pattern matching
-        | every user's profile page.
-        |
-        */
-
         'mask_patterns' => [],
+        'tag' => env('RYBBIT_SCRIPT_TAG'),
+
+        'replay' => [
+            'mask_text_selectors' => [],
+            'block_class' => env('RYBBIT_REPLAY_BLOCK_CLASS'),
+            'block_selector' => env('RYBBIT_REPLAY_BLOCK_SELECTOR'),
+            'ignore_class' => env('RYBBIT_REPLAY_IGNORE_CLASS'),
+            'ignore_selector' => env('RYBBIT_REPLAY_IGNORE_SELECTOR'),
+            'mask_text_class' => env('RYBBIT_REPLAY_MASK_TEXT_CLASS'),
+            'mask_all_inputs' => env('RYBBIT_REPLAY_MASK_ALL_INPUTS'),
+            'mask_input_options' => [],
+            'collect_fonts' => env('RYBBIT_REPLAY_COLLECT_FONTS'),
+            'sampling' => [],
+            'slim_dom_options' => null,
+        ],
     ],
 
     /*

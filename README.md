@@ -14,7 +14,7 @@ A simple, elegant Laravel package for integrating [Rybbit](https://www.rybbit.io
 
 ## Features
 
-- **`@rybbit` Blade directive** — injects the Rybbit tracking script with a single tag, with support for the `data-debounce`, `data-skip-patterns`, and `data-mask-patterns` script options.
+- **`@rybbit` Blade directive** — injects the Rybbit tracking script with a single tag, with support for the `data-debounce`, `data-tag`, `data-skip-patterns`, `data-mask-patterns`, and session replay script options.
 - **Server-side event tracking** — the `Rybbit` facade sends pageviews, custom events, performance metrics, outbound clicks, and errors straight to Rybbit's `/api/track` endpoint from your backend.
 - **User queries** — look up a site's users, a specific user's profile and devices, and their daily session counts through Rybbit's read API.
 - **First-party tunnel** — proxies tracking requests (script, `track`, `identify`, session replay, site config) through your own domain instead of Rybbit's, so the script isn't blocked by ad blockers or browser tracking protections.
@@ -96,6 +96,8 @@ RYBBIT_SCRIPT_DEBOUNCE=500
     'debounce' => env('RYBBIT_SCRIPT_DEBOUNCE'),
     'skip_patterns' => ['/admin/**'],
     'mask_patterns' => ['/users/**/profile'],
+    'tag' => env('RYBBIT_SCRIPT_TAG'),
+    // ...
 ],
 ```
 
@@ -104,11 +106,16 @@ RYBBIT_SCRIPT_DEBOUNCE=500
     src="/rybbit/script.js"
     data-site-id="your-site-id"
     data-debounce="500"
+    data-tag="v2-launch"
     data-skip-patterns='["/admin/**"]'
     data-mask-patterns='["/users/**/profile"]'
     defer
 ></script>
 ```
+
+Session replay attributes (`data-replay-*`) live under `script.replay` in the same config file, and only apply when session replay is enabled in your Rybbit site settings.
+
+See the full [tracking script documentation](https://rybbit.com/docs/script) for every attribute and what it does.
 
 ### Sending events server-side
 
