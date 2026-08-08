@@ -18,7 +18,7 @@ return [
     |
     */
 
-    'host' => env('RYBBIT_HOST', 'https://rybbit.io'),
+    'host' => env('RYBBIT_HOST', 'https://app.rybbit.io'),
 
     /*
     |--------------------------------------------------------------------------

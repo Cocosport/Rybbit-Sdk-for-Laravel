@@ -11,17 +11,17 @@ use Illuminate\Support\Facades\Log;
 use Workbench\App\Models\User;
 
 beforeEach(function () {
-    config()->set('rybbit.host', 'https://rybbit.io');
+    config()->set('rybbit.host', 'https://app.rybbit.io');
     config()->set('rybbit.site_seq_id', '42');
     config()->set('rybbit.api_key', 'test-api-key');
 });
 
 it('sends page views to the track endpoint', function () {
-    Http::fake(['https://rybbit.io/api/track' => Http::response(['success' => true])]);
+    Http::fake(['https://app.rybbit.io/api/track' => Http::response(['success' => true])]);
 
     app(Rybbit::class)->track()->pageView(['pathname' => '/checkout']);
 
-    Http::assertSent(fn ($request) => $request->url() === 'https://rybbit.io/api/track'
+    Http::assertSent(fn ($request) => $request->url() === 'https://app.rybbit.io/api/track'
         && $request->method() === 'POST'
         && $request->hasHeader('Authorization', 'Bearer test-api-key')
         && $request['site_id'] === '42'
@@ -30,7 +30,7 @@ it('sends page views to the track endpoint', function () {
 });
 
 it('sends custom events with properties encoded as a json string', function () {
-    Http::fake(['https://rybbit.io/api/track' => Http::response(['success' => true])]);
+    Http::fake(['https://app.rybbit.io/api/track' => Http::response(['success' => true])]);
 
     app(Rybbit::class)->track()->event('purchase', ['amount' => 99.99, 'currency' => 'USD']);
 
@@ -40,7 +40,7 @@ it('sends custom events with properties encoded as a json string', function () {
 });
 
 it('sends performance metrics as top level fields', function () {
-    Http::fake(['https://rybbit.io/api/track' => Http::response(['success' => true])]);
+    Http::fake(['https://app.rybbit.io/api/track' => Http::response(['success' => true])]);
 
     app(Rybbit::class)->track()->performance(['lcp' => 1200.5, 'cls' => 0.05]);
 
@@ -50,7 +50,7 @@ it('sends performance metrics as top level fields', function () {
 });
 
 it('sends outbound link clicks with the url in properties', function () {
-    Http::fake(['https://rybbit.io/api/track' => Http::response(['success' => true])]);
+    Http::fake(['https://app.rybbit.io/api/track' => Http::response(['success' => true])]);
 
     app(Rybbit::class)->track()->outbound('https://example.com', ['text' => 'Example']);
 
@@ -59,7 +59,7 @@ it('sends outbound link clicks with the url in properties', function () {
 });
 
 it('sends errors with the event name and message', function () {
-    Http::fake(['https://rybbit.io/api/track' => Http::response(['success' => true])]);
+    Http::fake(['https://app.rybbit.io/api/track' => Http::response(['success' => true])]);
 
     app(Rybbit::class)->track()->error('TypeError', 'Cannot read property of undefined', ['fileName' => 'app.js']);
 
@@ -73,7 +73,7 @@ it('fills pathname, hostname, user agent, ip address, and querystring from the c
         'HTTP_USER_AGENT' => 'Mozilla/5.0',
         'REMOTE_ADDR' => '203.0.113.5',
     ]));
-    Http::fake(['https://rybbit.io/api/track' => Http::response(['success' => true])]);
+    Http::fake(['https://app.rybbit.io/api/track' => Http::response(['success' => true])]);
 
     app(Rybbit::class)->track()->pageView();
 
@@ -86,7 +86,7 @@ it('fills pathname, hostname, user agent, ip address, and querystring from the c
 
 it('lets explicit data override the request-derived defaults', function () {
     $this->app->instance('request', Request::create('https://example.test/checkout', 'GET'));
-    Http::fake(['https://rybbit.io/api/track' => Http::response(['success' => true])]);
+    Http::fake(['https://app.rybbit.io/api/track' => Http::response(['success' => true])]);
 
     app(Rybbit::class)->track()->pageView(['pathname' => '/custom-path', 'hostname' => 'custom.test']);
 
@@ -98,7 +98,7 @@ it('fills user_id from the authenticated user', function () {
     $user = new User;
     $user->id = 42;
     $this->actingAs($user);
-    Http::fake(['https://rybbit.io/api/track' => Http::response(['success' => true])]);
+    Http::fake(['https://app.rybbit.io/api/track' => Http::response(['success' => true])]);
 
     app(Rybbit::class)->track()->pageView();
 
@@ -111,7 +111,7 @@ it('resolves user_id using a configured guard', function () {
     $user = new User;
     $user->id = 7;
     $this->actingAs($user, 'admin');
-    Http::fake(['https://rybbit.io/api/track' => Http::response(['success' => true])]);
+    Http::fake(['https://app.rybbit.io/api/track' => Http::response(['success' => true])]);
 
     app(Rybbit::class)->track()->pageView();
 
@@ -124,7 +124,7 @@ it('resolves user_id using a configured attribute key', function () {
     $user->id = 1;
     $user->email = 'user@example.com';
     $this->actingAs($user);
-    Http::fake(['https://rybbit.io/api/track' => Http::response(['success' => true])]);
+    Http::fake(['https://app.rybbit.io/api/track' => Http::response(['success' => true])]);
 
     app(Rybbit::class)->track()->pageView();
 
@@ -142,7 +142,7 @@ it('resolves user_id by calling a configured method key', function () {
     };
     $user->id = 99;
     $this->actingAs($user);
-    Http::fake(['https://rybbit.io/api/track' => Http::response(['success' => true])]);
+    Http::fake(['https://app.rybbit.io/api/track' => Http::response(['success' => true])]);
 
     app(Rybbit::class)->track()->pageView();
 
@@ -150,7 +150,7 @@ it('resolves user_id by calling a configured method key', function () {
 });
 
 it('omits user_id when nobody is authenticated', function () {
-    Http::fake(['https://rybbit.io/api/track' => Http::response(['success' => true])]);
+    Http::fake(['https://app.rybbit.io/api/track' => Http::response(['success' => true])]);
 
     app(Rybbit::class)->track()->pageView();
 
@@ -159,7 +159,7 @@ it('omits user_id when nobody is authenticated', function () {
 
 it('omits the authorization header when no api key is configured', function () {
     config()->set('rybbit.api_key', null);
-    Http::fake(['https://rybbit.io/api/track' => Http::response(['success' => true])]);
+    Http::fake(['https://app.rybbit.io/api/track' => Http::response(['success' => true])]);
 
     app(Rybbit::class)->track()->pageView();
 
@@ -168,7 +168,7 @@ it('omits the authorization header when no api key is configured', function () {
 
 it('logs failed track requests', function () {
     Log::spy();
-    Http::fake(['https://rybbit.io/api/track' => Http::response(['error' => 'nope'], 422)]);
+    Http::fake(['https://app.rybbit.io/api/track' => Http::response(['error' => 'nope'], 422)]);
 
     app(Rybbit::class)->track()->pageView();
 
@@ -176,14 +176,14 @@ it('logs failed track requests', function () {
 });
 
 it('does not throw on failed track requests by default', function () {
-    Http::fake(['https://rybbit.io/api/track' => Http::response(['error' => 'nope'], 422)]);
+    Http::fake(['https://app.rybbit.io/api/track' => Http::response(['error' => 'nope'], 422)]);
 
     app(Rybbit::class)->track()->pageView();
 })->throwsNoExceptions();
 
 it('throws on failed track requests when configured', function () {
     config()->set('rybbit.throw_on_error', true);
-    Http::fake(['https://rybbit.io/api/track' => Http::response(['error' => 'nope'], 422)]);
+    Http::fake(['https://app.rybbit.io/api/track' => Http::response(['error' => 'nope'], 422)]);
 
     app(Rybbit::class)->track()->pageView();
 })->throws(RequestException::class);

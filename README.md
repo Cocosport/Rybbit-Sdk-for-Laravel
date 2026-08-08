@@ -71,7 +71,7 @@ At a minimum, set your site ID:
 RYBBIT_SITE_ID=your-site-id
 ```
 
-By default the package points at Rybbit Cloud (`https://rybbit.io`). If you self-host Rybbit, point the SDK at your instance instead:
+By default the package points at Rybbit Cloud (`https://app.rybbit.io`). If you self-host Rybbit, point the SDK at your instance instead:
 
 ```env
 RYBBIT_HOST=https://analytics.your-domain.com
