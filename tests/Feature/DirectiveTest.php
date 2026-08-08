@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Blade;
 
 it('points the tracking script at the tunnel url when the tunnel is enabled', function () {
     config()->set('rybbit.site_id', 'site-123');
-    config()->set('rybbit.host', 'https://rybbit.io');
+    config()->set('rybbit.host', 'https://app.rybbit.io');
     config()->set('rybbit.tunnel.enabled', true);
     config()->set('rybbit.tunnel.url', '/rybbit');
 
@@ -19,14 +19,14 @@ it('points the tracking script at the tunnel url when the tunnel is enabled', fu
 
 it('falls back to the host when the tunnel is disabled', function () {
     config()->set('rybbit.site_id', 'site-123');
-    config()->set('rybbit.host', 'https://rybbit.io');
+    config()->set('rybbit.host', 'https://app.rybbit.io');
     config()->set('rybbit.tunnel.enabled', false);
     config()->set('rybbit.tunnel.url', '/rybbit');
 
     $html = Blade::render('@rybbit', deleteCachedView: true);
 
     expect($html)
-        ->toContain('src="https://rybbit.io/script.js"')
+        ->toContain('src="https://app.rybbit.io/script.js"')
         ->toContain('data-site-id="site-123"');
 });
 
@@ -52,7 +52,7 @@ it('adds the optional script attributes when configured', function () {
 
 it('omits the optional script attributes when not configured', function () {
     config()->set('rybbit.site_id', 'site-123');
-    config()->set('rybbit.host', 'https://rybbit.io');
+    config()->set('rybbit.host', 'https://app.rybbit.io');
     config()->set('rybbit.tunnel.enabled', false);
     config()->set('rybbit.script.debounce', null);
     config()->set('rybbit.script.skip_patterns', []);
@@ -70,7 +70,7 @@ it('omits the optional script attributes when not configured', function () {
 
 it('adds the session replay attributes when configured', function () {
     config()->set('rybbit.site_id', 'site-123');
-    config()->set('rybbit.host', 'https://rybbit.io');
+    config()->set('rybbit.host', 'https://app.rybbit.io');
     config()->set('rybbit.tunnel.enabled', false);
     config()->set('rybbit.script.replay.mask_text_selectors', ['.user-name', '#email']);
     config()->set('rybbit.script.replay.block_class', 'rr-block');
@@ -100,7 +100,7 @@ it('adds the session replay attributes when configured', function () {
 
 it('omits the session replay attributes when not configured', function () {
     config()->set('rybbit.site_id', 'site-123');
-    config()->set('rybbit.host', 'https://rybbit.io');
+    config()->set('rybbit.host', 'https://app.rybbit.io');
     config()->set('rybbit.tunnel.enabled', false);
 
     $html = Blade::render('@rybbit', deleteCachedView: true);
@@ -121,7 +121,7 @@ it('omits the session replay attributes when not configured', function () {
 
 it('renders the slim dom options as a boolean shorthand', function () {
     config()->set('rybbit.site_id', 'site-123');
-    config()->set('rybbit.host', 'https://rybbit.io');
+    config()->set('rybbit.host', 'https://app.rybbit.io');
     config()->set('rybbit.tunnel.enabled', false);
     config()->set('rybbit.script.replay.slim_dom_options', true);
 
@@ -132,7 +132,7 @@ it('renders the slim dom options as a boolean shorthand', function () {
 
 it('renders the slim dom options as a json object', function () {
     config()->set('rybbit.site_id', 'site-123');
-    config()->set('rybbit.host', 'https://rybbit.io');
+    config()->set('rybbit.host', 'https://app.rybbit.io');
     config()->set('rybbit.tunnel.enabled', false);
     config()->set('rybbit.script.replay.slim_dom_options', ['script' => false, 'comment' => true]);
 
@@ -143,7 +143,7 @@ it('renders the slim dom options as a json object', function () {
 
 it('renders nothing when the site_id is missing', function () {
     config()->set('rybbit.site_id', null);
-    config()->set('rybbit.host', 'https://rybbit.io');
+    config()->set('rybbit.host', 'https://app.rybbit.io');
 
     $html = Blade::render('@rybbit', deleteCachedView: true);
 
@@ -162,7 +162,7 @@ it('renders nothing when neither the tunnel nor the host are available', functio
 
 it('reflects config changes without recompiling the view', function () {
     config()->set('rybbit.site_id', 'first-site');
-    config()->set('rybbit.host', 'https://rybbit.io');
+    config()->set('rybbit.host', 'https://app.rybbit.io');
     config()->set('rybbit.tunnel.enabled', false);
 
     $compiled = Blade::compileString('@rybbit');

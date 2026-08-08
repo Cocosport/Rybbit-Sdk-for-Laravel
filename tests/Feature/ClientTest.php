@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 it('does not throw when the configuration is valid', function () {
-    config()->set('rybbit.host', 'https://rybbit.io');
+    config()->set('rybbit.host', 'https://app.rybbit.io');
     config()->set('rybbit.api_key', 'test-api-key');
 
     app(Client::class);
@@ -27,14 +27,14 @@ it('throws when the host is not a valid url', function () {
 })->throws(InvalidConfigurationException::class, 'The "rybbit.host" configuration value [not-a-url] is not a valid URL.');
 
 it('throws when the site_seq_id is missing', function () {
-    config()->set('rybbit.host', 'https://rybbit.io');
+    config()->set('rybbit.host', 'https://app.rybbit.io');
     config()->set('rybbit.site_seq_id', null);
 
     app(Client::class);
 })->throws(InvalidConfigurationException::class, 'The "rybbit.site_seq_id" configuration value is missing. Set RYBBIT_SITE_SEQ_ID in your .env file.');
 
 it('builds a site-scoped path', function () {
-    config()->set('rybbit.host', 'https://rybbit.io');
+    config()->set('rybbit.host', 'https://app.rybbit.io');
     config()->set('rybbit.site_seq_id', '42');
 
     expect(app(Client::class)->sitePath('users'))->toBe('api/sites/42/users');
@@ -72,7 +72,7 @@ it('does not send requests when misconfigured in production', function () {
 });
 
 it('warns when the api key is missing', function () {
-    config()->set('rybbit.host', 'https://rybbit.io');
+    config()->set('rybbit.host', 'https://app.rybbit.io');
     config()->set('rybbit.api_key', null);
     Log::spy();
 
@@ -82,7 +82,7 @@ it('warns when the api key is missing', function () {
 });
 
 it('does not warn when the api key is set', function () {
-    config()->set('rybbit.host', 'https://rybbit.io');
+    config()->set('rybbit.host', 'https://app.rybbit.io');
     config()->set('rybbit.api_key', 'test-api-key');
     Log::spy();
 
@@ -92,7 +92,7 @@ it('does not warn when the api key is set', function () {
 });
 
 it('does not warn about the missing api key when logging is disabled', function () {
-    config()->set('rybbit.host', 'https://rybbit.io');
+    config()->set('rybbit.host', 'https://app.rybbit.io');
     config()->set('rybbit.api_key', null);
     config()->set('rybbit.logs', false);
     Log::spy();

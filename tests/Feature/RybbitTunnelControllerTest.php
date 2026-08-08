@@ -23,7 +23,7 @@ it('throws when the tunnel is disabled', function () {
 
 it('proxies and caches script requests', function () {
     Http::fake([
-        'https://rybbit.io/api/script.js' => Http::response('console.log(1);', 200, [
+        'https://app.rybbit.io/api/script.js' => Http::response('console.log(1);', 200, [
             'Content-Type' => 'application/javascript',
         ]),
     ]);
@@ -41,7 +41,7 @@ it('rejects script requests for unsupported script names', function () {
 
 it('does not cache failed script responses', function () {
     Http::fake([
-        'https://rybbit.io/api/script.js' => Http::response('upstream error', 500),
+        'https://app.rybbit.io/api/script.js' => Http::response('upstream error', 500),
     ]);
 
     $this->get('/rybbit/script.js')->assertStatus(500);
@@ -51,28 +51,28 @@ it('does not cache failed script responses', function () {
 
 it('proxies track requests', function () {
     Http::fake([
-        'https://rybbit.io/api/track' => Http::response(['success' => true], 201),
+        'https://app.rybbit.io/api/track' => Http::response(['success' => true], 201),
     ]);
 
     $this->postJson('/rybbit/track', ['event' => 'pageview'])
         ->assertStatus(201)
         ->assertJson(['success' => true]);
 
-    Http::assertSent(fn ($request) => $request->url() === 'https://rybbit.io/api/track'
+    Http::assertSent(fn ($request) => $request->url() === 'https://app.rybbit.io/api/track'
         && $request->method() === 'POST'
         && $request['event'] === 'pageview');
 });
 
 it('proxies identify requests', function () {
     Http::fake([
-        'https://rybbit.io/api/identify' => Http::response(['success' => true], 201),
+        'https://app.rybbit.io/api/identify' => Http::response(['success' => true], 201),
     ]);
 
     $this->postJson('/rybbit/identify', ['userId' => 'user-1'])
         ->assertStatus(201)
         ->assertJson(['success' => true]);
 
-    Http::assertSent(fn ($request) => $request->url() === 'https://rybbit.io/api/identify'
+    Http::assertSent(fn ($request) => $request->url() === 'https://app.rybbit.io/api/identify'
         && $request->method() === 'POST'
         && $request['userId'] === 'user-1');
 });
@@ -92,7 +92,7 @@ it('queues session replay requests instead of forwarding them inline', function 
 
 it('proxies and caches site config requests', function () {
     Http::fake([
-        'https://rybbit.io/api/site/tracking-config/site-123' => Http::response(['trackErrors' => true], 200),
+        'https://app.rybbit.io/api/site/tracking-config/site-123' => Http::response(['trackErrors' => true], 200),
     ]);
 
     $this->get('/rybbit/site/tracking-config/site-123')->assertOk()->assertJson(['trackErrors' => true]);

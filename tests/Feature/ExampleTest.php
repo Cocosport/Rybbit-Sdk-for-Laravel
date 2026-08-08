@@ -13,5 +13,5 @@ it('returns the same instance from the container', function () {
 });
 
 it('merges the package config', function () {
-    expect(config('rybbit.host'))->toBe('https://rybbit.io');
+    expect(config('rybbit.host'))->toBe('https://app.rybbit.io');
 });
