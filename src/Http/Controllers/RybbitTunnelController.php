@@ -56,17 +56,22 @@ class RybbitTunnelController
 
     protected function rememberSuccessful(string $key, Closure $callback): Response
     {
-        /** @var Response|null $cached */
+        /** @var array{content: string, status: int, contentType: string|null}|null $cached */
         $cached = Cache::get($key);
 
-        if ($cached !== null) {
-            return $cached;
+        if (is_array($cached)) {
+            return response($cached['content'], $cached['status'])
+                ->header('Content-Type', $cached['contentType']);
         }
 
         $response = $callback();
 
         if ($response->isSuccessful()) {
-            Cache::put($key, $response, 3600);
+            Cache::put($key, [
+                'content' => $response->getContent(),
+                'status' => $response->getStatusCode(),
+                'contentType' => $response->headers->get('Content-Type'),
+            ], 3600);
         }
 
         return $response;
