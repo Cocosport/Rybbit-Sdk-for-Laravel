@@ -63,6 +63,23 @@ it('proxies track requests', function () {
         && $request['event'] === 'pageview');
 });
 
+it('normalizes null querystring, referrer, and event_name to empty strings before forwarding track requests', function () {
+    Http::fake([
+        'https://app.rybbit.io/api/track' => Http::response(['success' => true], 201),
+    ]);
+
+    $this->postJson('/rybbit/track', [
+        'type' => 'pageview',
+        'querystring' => null,
+        'referrer' => null,
+        'event_name' => null,
+    ])->assertStatus(201);
+
+    Http::assertSent(fn ($request) => $request['querystring'] === ''
+        && $request['referrer'] === ''
+        && $request['event_name'] === '');
+});
+
 it('proxies identify requests', function () {
     Http::fake([
         'https://app.rybbit.io/api/identify' => Http::response(['success' => true], 201),

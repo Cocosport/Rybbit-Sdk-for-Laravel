@@ -15,6 +15,15 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class Tunnel
 {
+    /**
+     * Fields the tracking script sends as null when absent (no querystring,
+     * no referrer, no custom event name), but Rybbit's API rejects unless
+     * they're strings.
+     *
+     * @var list<string>
+     */
+    private const NULLABLE_STRING_FIELDS = ['querystring', 'referrer', 'event_name'];
+
     private string $rybbitHost;
 
     public function __construct()
@@ -52,7 +61,7 @@ class Tunnel
 
         try {
             $response = $method === 'POST'
-                ? $httpRequest->post($url, $request->all())
+                ? $httpRequest->post($url, $this->normalizeBody($request->all()))
                 : $httpRequest->get($url);
         } catch (ConnectionException $exception) {
             if (config('rybbit.logs')) {
@@ -77,6 +86,21 @@ class Tunnel
 
         return response($response->body(), $response->status())
             ->header('Content-Type', $response->header('Content-Type'));
+    }
+
+    /**
+     * @param  array<string, mixed>  $body
+     * @return array<string, mixed>
+     */
+    private function normalizeBody(array $body): array
+    {
+        foreach (self::NULLABLE_STRING_FIELDS as $field) {
+            if (array_key_exists($field, $body) && $body[$field] === null) {
+                $body[$field] = '';
+            }
+        }
+
+        return $body;
     }
 
     /**
