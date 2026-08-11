@@ -1,4 +1,3 @@
-
 # Release Notes
 
 ## [Unreleased](https://github.com/cocosport/rybbit-sdk-for-laravel/compare/v0.2.5...HEAD)
