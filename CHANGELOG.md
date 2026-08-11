@@ -1,6 +1,25 @@
+
 # Release Notes
 
-## [Unreleased](https://github.com/cocosport/rybbit-sdk-for-laravel/compare/v0.2.2...HEAD)
+## [Unreleased](https://github.com/cocosport/rybbit-sdk-for-laravel/compare/v0.2.5...HEAD)
+
+## [v0.2.5](https://github.com/cocosport/rybbit-sdk-for-laravel/compare/v0.2.2...v0.2.5) - 2026-08-11
+
+### Bug Fixes
+
+- `RYBBIT_HOST` default now points to Rybbit Cloud's actual host instead of the previous incorrect default. (#2)
+- Tunnel response caching no longer stores the full `Illuminate\Http\Response` object — a drift in its serialized shape across deploys would unserialize into `__PHP_Incomplete_Class` and break the return-type check on cache hits. Content, status, and content-type are now cached as scalars and the response is rebuilt fresh on every hit.
+- `Tunnel::forward()` now normalizes `querystring`, `referrer`, and `event_name` to strings before forwarding — the tracking script sends them as `null` when absent, which Rybbit's `/api/track` schema rejects with a 400.
+
+### Maintenance
+
+- CI: retry the type-coverage step to absorb a known upstream race in `pest-plugin-type-coverage`'s parallel file analysis, which can intermittently corrupt its cache and fail the build with a `ParseError`.
+
+### Documentation
+
+- Documented the feature coverage scope in the README. (#4)
+
+**Full Changelog**: https://github.com/cocosport/rybbit-sdk-for-laravel/compare/v0.2.2...v0.2.5
 
 ## [v0.2.2](https://github.com/cocosport/rybbit-sdk-for-laravel/compare/v0.2.1...v0.2.2) - 2026-08-07
 
