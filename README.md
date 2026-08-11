@@ -15,6 +15,7 @@ A simple, elegant Laravel package for integrating [Rybbit](https://www.rybbit.io
 ## Table of Contents
 
 - [Features](#features)
+- [Feature Coverage](#feature-coverage)
 - [Installation](#installation)
   - [Publishing the Configuration File](#publishing-the-configuration-file)
 - [Configuration](#configuration)
@@ -40,6 +41,16 @@ A simple, elegant Laravel package for integrating [Rybbit](https://www.rybbit.io
 - **Resilient forwarding** — failed tunnel requests are retried, optionally logged, and never cache a failed response; session replay data is forwarded through a queued job so it never blocks the request/response cycle.
 - **`Rybbit::fake()`** — swap in an in-memory fake for your tests, with assertions for every tracking and user-query method and no real HTTP requests made.
 - **Laravel Boost skill** — ships a `rybbit-development` [Agent Skill](https://laravel.com/docs/boost#agent-skills) that [Laravel Boost](https://laravel.com/docs/boost) auto-installs for your AI coding agent when you run `php artisan boost:install`, so it already knows how to use this package correctly.
+
+## Feature Coverage
+
+This SDK wraps the slice of [Rybbit](https://rybbit.com)'s platform our organization actually uses: embedding the tracking script, tunneling it through your own domain, sending events server-side, and reading back user data. Rybbit's [full API](https://rybbit.com/docs/api/getting-started) and dashboard cover a lot more ground that this package doesn't touch, notably:
+
+- **Goals & Funnels** — conversion and drop-off analysis.
+- **Sessions, Session Replay, Insights, Performance, Errors, and Bots queries** — analytics read endpoints beyond what `Rybbit::users()` exposes (the tunnel forwards session replay *recording*, but nothing here queries it back).
+- **Organizations, Teams, Sites, API Keys, and Data Import** — account and site administration endpoints.
+
+We don't plan to cover all of Rybbit's features anytime soon, since this package tracks what we actually need. If you need one of the above (or anything else Rybbit offers), [open an issue](https://github.com/cocosport/rybbit-sdk-for-laravel/issues) describing your use case and we'll add it, or send a pull request — see [Contributing](#contributing).
 
 ## Installation
 
