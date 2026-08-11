@@ -22,7 +22,7 @@ class Tunnel
      *
      * @var list<string>
      */
-    private const NULLABLE_STRING_FIELDS = ['querystring', 'referrer', 'event_name'];
+    private const array NULLABLE_STRING_FIELDS = ['querystring', 'referrer', 'event_name'];
 
     private string $rybbitHost;
 
