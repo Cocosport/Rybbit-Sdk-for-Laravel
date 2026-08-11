@@ -60,7 +60,19 @@ jobs:
 
       - name: Type Coverage
         if: runner.os != 'Windows'
-        run: composer test:types
+        # pest-plugin-type-coverage forks workers via Pokio to analyse files in parallel; on
+        # PHP < 8.4 it's stuck on the 4.x line, where concurrent writes to its cache file can
+        # corrupt it and crash with a ParseError. Retry to absorb that upstream race.
+        run: |
+          attempt=1
+          until composer test:types; do
+            if [ "$attempt" -ge 3 ]; then
+              exit 1
+            fi
+            echo "Type coverage failed (attempt $attempt/3), retrying..."
+            attempt=$((attempt + 1))
+            sleep 5
+          done
 
       - name: Test Suite
         if: runner.os != 'Windows'
