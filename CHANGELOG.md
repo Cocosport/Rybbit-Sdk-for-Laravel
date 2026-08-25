@@ -1,6 +1,14 @@
 # Release Notes
 
-## [Unreleased](https://github.com/cocosport/rybbit-sdk-for-laravel/compare/v0.2.5...HEAD)
+## [Unreleased](https://github.com/cocosport/rybbit-sdk-for-laravel/compare/v0.2.6...HEAD)
+
+## [v0.2.6](https://github.com/cocosport/rybbit-sdk-for-laravel/compare/v0.2.5...v0.2.6) - 2026-08-25
+
+### Enhancements
+
+- Added `Rybbit::users()->delete()` to remove a user's tracked data from a site — the DELETE counterpart to the existing `find()` lookup. Comes with matching `Rybbit::fake()` support (`assertUserDeleted()` and a `users.delete` stub key).
+
+**Full Changelog**: https://github.com/cocosport/rybbit-sdk-for-laravel/compare/v0.2.5...v0.2.6
 
 ## [v0.2.5](https://github.com/cocosport/rybbit-sdk-for-laravel/compare/v0.2.2...v0.2.5) - 2026-08-11
 
