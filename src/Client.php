@@ -66,6 +66,17 @@ class Client
     }
 
     /**
+     * Send a DELETE request to Rybbit's API and return the decoded JSON response.
+     *
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>|null
+     */
+    public function delete(string $path, array $data = []): ?array
+    {
+        return $this->request('delete', $path, $data)?->json();
+    }
+
+    /**
      * Build a path scoped to the configured site, e.g. "api/sites/1/users".
      */
     public function sitePath(string $suffix): string
@@ -110,7 +121,7 @@ class Client
     /**
      * Make the actual HTTP request and handle its response.
      *
-     * @param  string  $method  "post" | "get"
+     * @param  string  $method  "post" | "get" | "delete"
      * @param  array<string, mixed>  $data  Request body (POST) or query parameters (GET).
      */
     private function request(string $method, string $path, array $data): ?Response

@@ -184,4 +184,17 @@ class Users
     {
         return $this->client->get($this->client->sitePath('users/'.rawurlencode($userId)));
     }
+
+    /**
+     * Delete a user's tracked data from the configured site.
+     *
+     * DELETE /api/sites/:site/users/:userId
+     *
+     * @param  string  $userId  Device fingerprint or identified user ID.
+     * @return array<string, mixed>|null
+     */
+    public function delete(string $userId): ?array
+    {
+        return $this->client->delete($this->client->sitePath('users/'.rawurlencode($userId)));
+    }
 }

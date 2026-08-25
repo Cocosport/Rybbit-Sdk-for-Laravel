@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static void assertErrorSent(string $eventName, ?\Closure $callback = null)
  * @method static void assertUsersListed(?\Closure $callback = null)
  * @method static void assertUserRequested(string $userId)
+ * @method static void assertUserDeleted(string $userId)
  * @method static void assertSessionCountRequested(string $userId, ?\Closure $callback = null)
  *
  * @see \Cocosport\Rybbit\Rybbit

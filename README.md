@@ -35,7 +35,7 @@ A simple, elegant Laravel package for integrating [Rybbit](https://www.rybbit.io
 
 - **`@rybbit` Blade directive** — injects the Rybbit tracking script with a single tag, with support for the `data-debounce`, `data-tag`, `data-skip-patterns`, `data-mask-patterns`, and session replay script options.
 - **Server-side event tracking** — the `Rybbit` facade sends pageviews, custom events, performance metrics, outbound clicks, and errors straight to Rybbit's `/api/track` endpoint from your backend.
-- **User queries** — look up a site's users, a specific user's profile and devices, and their daily session counts through Rybbit's read API.
+- **User queries and deletion** — look up a site's users, a specific user's profile and devices, and their daily session counts through Rybbit's read API, or delete a user's tracked data.
 - **First-party tunnel** — proxies tracking requests (script, `track`, `identify`, session replay, site config) through your own domain instead of Rybbit's, so the script isn't blocked by ad blockers or browser tracking protections.
 - **Client IP forwarding** — the tunnel resolves the real visitor IP from `X-Forwarded-For` and forwards it to Rybbit, so proxied traffic is still attributed correctly.
 - **Resilient forwarding** — failed tunnel requests are retried, optionally logged, and never cache a failed response; session replay data is forwarded through a queued job so it never blocks the request/response cycle.
@@ -197,9 +197,11 @@ Rybbit::users()->list(page: 1, pageSize: 25, sortBy: 'pageviews', sortOrder: 'de
 Rybbit::users()->sessionCount('abc123def456', ['time_zone' => 'America/New_York']);
 
 Rybbit::users()->find('user@example.com');
+
+Rybbit::users()->delete('user@example.com');
 ```
 
-`list()` returns every user for the site, paginated; `sessionCount()` returns a user's daily session counts, keyed by date; `find()` returns one user's full profile — traits, locations, devices, and linked devices. Like the tracking methods above, each returns the decoded JSON response as an `array`, or `null` if the request couldn't reach Rybbit at all — see the linked docs for the exact payload shape.
+`list()` returns every user for the site, paginated; `sessionCount()` returns a user's daily session counts, keyed by date; `find()` returns one user's full profile — traits, locations, devices, and linked devices; `delete()` removes a user's tracked data from the site. Like the tracking methods above, each returns the decoded JSON response as an `array`, or `null` if the request couldn't reach Rybbit at all — see the linked docs for the exact payload shape.
 
 ### The tunnel
 
@@ -237,10 +239,11 @@ Rybbit::assertSent(fn (string $key, array $data) => $key === 'pageview');
 // users() side
 Rybbit::assertUsersListed(fn (array $query) => $query['sort_by'] === 'pageviews');
 Rybbit::assertUserRequested('user@example.com');
+Rybbit::assertUserDeleted('user@example.com');
 Rybbit::assertSessionCountRequested('abc123def456');
 ```
 
-Without a stub, faked calls return a sensible default (`['success' => true]` for tracking calls, an empty `data` payload for user queries) so code under test that reads the response doesn't have to handle `null`. Pass stubs keyed by symbolic call name (`pageview`, `custom_event`, `performance`, `outbound`, `error`, `users.list`, `users.sessionCount`, `users.find`) to control what's returned:
+Without a stub, faked calls return a sensible default (`['success' => true]` for tracking calls and `delete()`, an empty `data` payload for the other user queries) so code under test that reads the response doesn't have to handle `null`. Pass stubs keyed by symbolic call name (`pageview`, `custom_event`, `performance`, `outbound`, `error`, `users.list`, `users.sessionCount`, `users.find`, `users.delete`) to control what's returned:
 
 ```php
 Rybbit::fake([

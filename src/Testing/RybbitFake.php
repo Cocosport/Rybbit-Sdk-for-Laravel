@@ -127,6 +127,14 @@ class RybbitFake extends Rybbit
         PHPUnit::assertNotEmpty($matching, "No user [{$userId}] was requested from Rybbit.");
     }
 
+    public function assertUserDeleted(string $userId): void
+    {
+        $matching = array_filter($this->client->recorded(), fn (array $call) => $call['key'] === 'users.delete'
+            && rawurldecode(basename($call['path'])) === $userId);
+
+        PHPUnit::assertNotEmpty($matching, "No user [{$userId}] was deleted from Rybbit.");
+    }
+
     /**
      * @param  Closure(array<string, mixed> $query): bool|null  $callback
      */

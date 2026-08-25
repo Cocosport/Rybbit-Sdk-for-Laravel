@@ -45,12 +45,13 @@ Every method returns the decoded JSON response as an `array`, or `null` if the r
 
 ## Querying users
 
-Use `Rybbit::users()` to read analytics data back out — this always requires `RYBBIT_API_KEY`:
+Use `Rybbit::users()` to read analytics data back out, or delete a user's tracked data — this always requires `RYBBIT_API_KEY`:
 
 ```php
 Rybbit::users()->list(page: 1, sortBy: 'pageviews', sortOrder: 'desc');
 Rybbit::users()->sessionCount('abc123def456', ['time_zone' => 'America/New_York']);
 Rybbit::users()->find('user@example.com');
+Rybbit::users()->delete('user@example.com');
 ```
 
 Same return contract as the tracking methods: decoded `array`, or `null` on failure.
@@ -72,6 +73,7 @@ Rybbit::assertOutboundSent('https://example.com');
 Rybbit::assertErrorSent('TypeError');
 Rybbit::assertUsersListed();
 Rybbit::assertUserRequested('user@example.com');
+Rybbit::assertUserDeleted('user@example.com');
 Rybbit::assertSessionCountRequested('abc123def456');
 Rybbit::assertNothingSent();
 Rybbit::assertSentCount(2);

@@ -67,3 +67,14 @@ it('gets detailed info for a user', function () {
 
     expect($response['data']['identified_user_id'])->toBe('user@example.com');
 });
+
+it('deletes a user', function () {
+    Http::fake(['https://app.rybbit.io/api/sites/1/users/*' => Http::response(['success' => true])]);
+
+    $response = app(Rybbit::class)->users()->delete('user@example.com');
+
+    Http::assertSent(fn ($request) => $request->url() === 'https://app.rybbit.io/api/sites/1/users/user%40example.com'
+        && $request->method() === 'DELETE');
+
+    expect($response['success'])->toBeTrue();
+});

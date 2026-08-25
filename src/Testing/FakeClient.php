@@ -31,6 +31,11 @@ class FakeClient extends Client
         return $this->record('get', $path, $query);
     }
 
+    public function delete(string $path, array $data = []): ?array
+    {
+        return $this->record('delete', $path, $data);
+    }
+
     public function sitePath(string $suffix): string
     {
         return "api/sites/fake/$suffix";
@@ -54,7 +59,7 @@ class FakeClient extends Client
             $data['properties'] = json_decode($data['properties'], true);
         }
 
-        $key = $this->resolveKey($path, $data);
+        $key = $this->resolveKey($method, $path, $data);
 
         $this->recorded[] = compact('method', 'path', 'key', 'data');
 
@@ -64,7 +69,7 @@ class FakeClient extends Client
     /**
      * @param  array<string, mixed>  $data
      */
-    protected function resolveKey(string $path, array $data): string
+    protected function resolveKey(string $method, string $path, array $data): string
     {
         if ($path === 'api/track') {
             return (string) ($data['type'] ?? 'track');
@@ -78,7 +83,7 @@ class FakeClient extends Client
             return 'users.list';
         }
 
-        return 'users.find';
+        return $method === 'delete' ? 'users.delete' : 'users.find';
     }
 
     /**
@@ -90,6 +95,7 @@ class FakeClient extends Client
             'users.list' => ['data' => [], 'totalCount' => 0, 'page' => 1, 'pageSize' => 100],
             'users.sessionCount' => ['data' => []],
             'users.find' => ['data' => []],
+            'users.delete' => ['success' => true],
             default => ['success' => true],
         };
     }

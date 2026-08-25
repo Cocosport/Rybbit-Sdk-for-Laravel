@@ -97,6 +97,14 @@ it('asserts a specific user was requested', function () {
     Rybbit::assertUserRequested('user@example.com');
 });
 
+it('asserts a specific user was deleted', function () {
+    Rybbit::fake();
+
+    Rybbit::users()->delete('user@example.com');
+
+    Rybbit::assertUserDeleted('user@example.com');
+});
+
 it('asserts a session count request was sent', function () {
     Rybbit::fake();
 
@@ -111,6 +119,7 @@ it('returns sensible default responses when nothing is stubbed', function () {
     expect(Rybbit::track()->pageView())->toBe(['success' => true]);
     expect(Rybbit::users()->list())->toBe(['data' => [], 'totalCount' => 0, 'page' => 1, 'pageSize' => 100]);
     expect(Rybbit::users()->find('abc123'))->toBe(['data' => []]);
+    expect(Rybbit::users()->delete('abc123'))->toBe(['success' => true]);
 });
 
 it('returns stubbed responses keyed by symbolic call name', function () {
