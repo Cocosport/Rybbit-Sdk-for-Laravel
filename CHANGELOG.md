@@ -1,6 +1,20 @@
 # Release Notes
 
-## [Unreleased](https://github.com/cocosport/rybbit-sdk-for-laravel/compare/v0.2.6...HEAD)
+## [Unreleased](https://github.com/cocosport/rybbit-sdk-for-laravel/compare/v0.3.0...HEAD)
+
+## [v0.3.0](https://github.com/cocosport/rybbit-sdk-for-laravel/compare/v0.2.6...v0.3.0) - 2026-09-02
+
+### Enhancements
+
+- `Rybbit::overview()` — query the configured site's headline stats (`summary()`), bucketed time series (`timeSeries()`), live visitor count (`liveVisitors()`), dimension breakdowns (`metric()`), and page titles (`pageTitles()`), e.g. for a daily-active-users chart. Comes with matching `Rybbit::fake()` support (`assertOverviewRequested()`, `assertTimeSeriesRequested()`, `assertLiveVisitorsRequested()`, `assertMetricRequested()`, `assertPageTitlesRequested()`).
+- New `Cocosport\Rybbit\Enums` namespace (`TimeBucket`, `FilterParameter`, `UserSortBy`, `SortOrder`) replaces loose strings with typed, autocompletable values across `Overview` and `Users::list()`.
+
+### Breaking Changes
+
+- `Users::list()`'s `$sortBy` and `$sortOrder` parameters now take `Cocosport\Rybbit\Enums\UserSortBy` and `Cocosport\Rybbit\Enums\SortOrder` instead of raw strings, e.g. `Rybbit::users()->list(sortBy: UserSortBy::Pageviews, sortOrder: SortOrder::Desc)`.
+
+<!-- Release notes generated using configuration in .github/release.yml at main -->
+**Full Changelog**: https://github.com/Cocosport/Rybbit-Sdk-for-Laravel/compare/v0.2.6...v0.3.0
 
 ## [v0.2.6](https://github.com/cocosport/rybbit-sdk-for-laravel/compare/v0.2.5...v0.2.6) - 2026-08-25
 
