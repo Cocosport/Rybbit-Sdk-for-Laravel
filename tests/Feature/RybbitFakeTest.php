@@ -2,6 +2,9 @@
 
 declare(strict_types=1);
 
+use Cocosport\Rybbit\Enums\FilterParameter;
+use Cocosport\Rybbit\Enums\TimeBucket;
+use Cocosport\Rybbit\Enums\UserSortBy;
 use Cocosport\Rybbit\Facades\Rybbit;
 use Cocosport\Rybbit\Testing\RybbitFake;
 use Illuminate\Support\Facades\Http;
@@ -84,7 +87,7 @@ it('asserts via the generic assertSent escape hatch', function () {
 it('asserts a users list request was sent', function () {
     Rybbit::fake();
 
-    Rybbit::users()->list(sortBy: 'pageviews');
+    Rybbit::users()->list(sortBy: UserSortBy::Pageviews);
 
     Rybbit::assertUsersListed(fn (array $query) => $query['sort_by'] === 'pageviews');
 });
@@ -113,6 +116,46 @@ it('asserts a session count request was sent', function () {
     Rybbit::assertSessionCountRequested('abc123def456', fn (array $query) => $query['time_zone'] === 'UTC');
 });
 
+it('asserts an overview request was sent', function () {
+    Rybbit::fake();
+
+    Rybbit::overview()->summary(startDate: '2024-01-01');
+
+    Rybbit::assertOverviewRequested(fn (array $query) => $query['start_date'] === '2024-01-01');
+});
+
+it('asserts a time series request was sent', function () {
+    Rybbit::fake();
+
+    Rybbit::overview()->timeSeries(TimeBucket::Day);
+
+    Rybbit::assertTimeSeriesRequested(fn (array $query) => $query['bucket'] === 'day');
+});
+
+it('asserts a live visitors request was sent', function () {
+    Rybbit::fake();
+
+    Rybbit::overview()->liveVisitors(10);
+
+    Rybbit::assertLiveVisitorsRequested(fn (array $query) => $query['minutes'] === 10);
+});
+
+it('asserts a metric request was sent', function () {
+    Rybbit::fake();
+
+    Rybbit::overview()->metric(FilterParameter::Country);
+
+    Rybbit::assertMetricRequested(FilterParameter::Country);
+});
+
+it('asserts a page titles request was sent', function () {
+    Rybbit::fake();
+
+    Rybbit::overview()->pageTitles(limit: 5);
+
+    Rybbit::assertPageTitlesRequested(fn (array $query) => $query['limit'] === 5);
+});
+
 it('returns sensible default responses when nothing is stubbed', function () {
     Rybbit::fake();
 
@@ -120,6 +163,11 @@ it('returns sensible default responses when nothing is stubbed', function () {
     expect(Rybbit::users()->list())->toBe(['data' => [], 'totalCount' => 0, 'page' => 1, 'pageSize' => 100]);
     expect(Rybbit::users()->find('abc123'))->toBe(['data' => []]);
     expect(Rybbit::users()->delete('abc123'))->toBe(['success' => true]);
+    expect(Rybbit::overview()->summary())->toBe(['data' => []]);
+    expect(Rybbit::overview()->timeSeries())->toBe(['data' => []]);
+    expect(Rybbit::overview()->liveVisitors())->toBe(['count' => 0]);
+    expect(Rybbit::overview()->metric(FilterParameter::Country))->toBe(['data' => ['data' => [], 'totalCount' => 0]]);
+    expect(Rybbit::overview()->pageTitles())->toBe(['data' => []]);
 });
 
 it('returns stubbed responses keyed by symbolic call name', function () {
@@ -130,6 +178,16 @@ it('returns stubbed responses keyed by symbolic call name', function () {
     $response = Rybbit::users()->find('user@example.com');
 
     expect($response['data']['identified_user_id'])->toBe('user@example.com');
+});
+
+it('returns a stubbed time series response keyed by symbolic call name', function () {
+    Rybbit::fake([
+        'overview.timeSeries' => ['data' => [['time' => '2024-01-01 00:00:00', 'users' => 42]]],
+    ]);
+
+    $response = Rybbit::overview()->timeSeries(TimeBucket::Day);
+
+    expect($response['data'][0]['users'])->toBe(42);
 });
 
 it('fails the assertion when no matching request was sent', function () {

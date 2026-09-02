@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Cocosport\Rybbit;
 
+use Cocosport\Rybbit\Enums\SortOrder;
+use Cocosport\Rybbit\Enums\UserSortBy;
+
 class Users
 {
     public function __construct(
@@ -43,8 +46,8 @@ class Users
      *
      * @param  int  $page  1-indexed page number.
      * @param  int  $pageSize  Results per page.
-     * @param  string  $sortBy  "first_seen" | "last_seen" | "pageviews" | "sessions" | "events"
-     * @param  string  $sortOrder  "asc" | "desc"
+     * @param  UserSortBy  $sortBy  Field to sort by.
+     * @param  SortOrder  $sortOrder  Sort direction.
      * @param  bool  $identifiedOnly  Only return users with an identified_user_id.
      * @param  array<string, mixed>  $query  Additional query parameters, merged over the ones above.
      *                                       Also accepts the API's common parameters (date range, timezone, filters, ...).
@@ -55,16 +58,16 @@ class Users
     public function list(
         int $page = 1,
         int $pageSize = 100,
-        string $sortBy = 'last_seen',
-        string $sortOrder = 'desc',
+        UserSortBy $sortBy = UserSortBy::LastSeen,
+        SortOrder $sortOrder = SortOrder::Desc,
         bool $identifiedOnly = false,
         array $query = [],
     ): ?array {
         return $this->client->get($this->client->sitePath('users'), array_merge([
             'page' => $page,
             'page_size' => $pageSize,
-            'sort_by' => $sortBy,
-            'sort_order' => $sortOrder,
+            'sort_by' => $sortBy->value,
+            'sort_order' => $sortOrder->value,
             'identified_only' => $identifiedOnly ? 'true' : 'false',
         ], $query));
     }

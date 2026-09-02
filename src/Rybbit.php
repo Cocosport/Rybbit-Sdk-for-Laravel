@@ -24,4 +24,12 @@ class Rybbit
     {
         return app(Users::class);
     }
+
+    /**
+     * Query the configured site's overview stats (headline KPIs, time series, live visitors, breakdowns).
+     */
+    public function overview(): Overview
+    {
+        return app(Overview::class);
+    }
 }

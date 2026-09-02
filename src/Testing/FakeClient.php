@@ -75,6 +75,26 @@ class FakeClient extends Client
             return (string) ($data['type'] ?? 'track');
         }
 
+        if (str_ends_with($path, '/overview/time-series')) {
+            return 'overview.timeSeries';
+        }
+
+        if (str_ends_with($path, '/overview')) {
+            return 'overview.summary';
+        }
+
+        if (str_ends_with($path, '/live-user-count')) {
+            return 'overview.liveVisitors';
+        }
+
+        if (str_ends_with($path, '/metric')) {
+            return 'overview.metric';
+        }
+
+        if (str_ends_with($path, '/page-titles')) {
+            return 'overview.pageTitles';
+        }
+
         if (str_ends_with($path, '/session-count')) {
             return 'users.sessionCount';
         }
@@ -92,6 +112,11 @@ class FakeClient extends Client
     protected function defaultResponse(string $key): array
     {
         return match ($key) {
+            'overview.summary' => ['data' => []],
+            'overview.timeSeries' => ['data' => []],
+            'overview.liveVisitors' => ['count' => 0],
+            'overview.metric' => ['data' => ['data' => [], 'totalCount' => 0]],
+            'overview.pageTitles' => ['data' => []],
             'users.list' => ['data' => [], 'totalCount' => 0, 'page' => 1, 'pageSize' => 100],
             'users.sessionCount' => ['data' => []],
             'users.find' => ['data' => []],

@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Facade;
 /**
  * @method static \Cocosport\Rybbit\SendEvents track()
  * @method static \Cocosport\Rybbit\Users users()
+ * @method static \Cocosport\Rybbit\Overview overview()
  * @method static void assertNothingSent()
  * @method static void assertSentCount(int $count)
  * @method static void assertSent(\Closure $callback)
@@ -22,6 +23,11 @@ use Illuminate\Support\Facades\Facade;
  * @method static void assertUserRequested(string $userId)
  * @method static void assertUserDeleted(string $userId)
  * @method static void assertSessionCountRequested(string $userId, ?\Closure $callback = null)
+ * @method static void assertOverviewRequested(?\Closure $callback = null)
+ * @method static void assertTimeSeriesRequested(?\Closure $callback = null)
+ * @method static void assertLiveVisitorsRequested(?\Closure $callback = null)
+ * @method static void assertMetricRequested(\Cocosport\Rybbit\Enums\FilterParameter $parameter, ?\Closure $callback = null)
+ * @method static void assertPageTitlesRequested(?\Closure $callback = null)
  *
  * @see \Cocosport\Rybbit\Rybbit
  * @see RybbitFake

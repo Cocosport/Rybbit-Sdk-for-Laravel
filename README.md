@@ -23,6 +23,7 @@ A simple, elegant Laravel package for integrating [Rybbit](https://www.rybbit.io
   - [Injecting the tracking script](#injecting-the-tracking-script)
   - [Sending events server-side](#sending-events-server-side)
   - [Querying users](#querying-users)
+  - [Querying overview stats](#querying-overview-stats)
   - [The tunnel](#the-tunnel)
   - [Testing](#testing)
 - [Changelog](#changelog)
@@ -36,6 +37,7 @@ A simple, elegant Laravel package for integrating [Rybbit](https://www.rybbit.io
 - **`@rybbit` Blade directive** — injects the Rybbit tracking script with a single tag, with support for the `data-debounce`, `data-tag`, `data-skip-patterns`, `data-mask-patterns`, and session replay script options.
 - **Server-side event tracking** — the `Rybbit` facade sends pageviews, custom events, performance metrics, outbound clicks, and errors straight to Rybbit's `/api/track` endpoint from your backend.
 - **User queries and deletion** — look up a site's users, a specific user's profile and devices, and their daily session counts through Rybbit's read API, or delete a user's tracked data.
+- **Overview stats** — headline KPIs, bucketed time series, live visitor count, and dimension breakdowns (pages, countries, browsers, ...) for the configured site, e.g. for a daily-active-users chart.
 - **First-party tunnel** — proxies tracking requests (script, `track`, `identify`, session replay, site config) through your own domain instead of Rybbit's, so the script isn't blocked by ad blockers or browser tracking protections.
 - **Client IP forwarding** — the tunnel resolves the real visitor IP from `X-Forwarded-For` and forwards it to Rybbit, so proxied traffic is still attributed correctly.
 - **Resilient forwarding** — failed tunnel requests are retried, optionally logged, and never cache a failed response; session replay data is forwarded through a queued job so it never blocks the request/response cycle.
@@ -47,7 +49,7 @@ A simple, elegant Laravel package for integrating [Rybbit](https://www.rybbit.io
 This SDK wraps the slice of [Rybbit](https://rybbit.com)'s platform our organization actually uses: embedding the tracking script, tunneling it through your own domain, sending events server-side, and reading back user data. Rybbit's [full API](https://rybbit.com/docs/api/getting-started) and dashboard cover a lot more ground that this package doesn't touch, notably:
 
 - **Goals & Funnels** — conversion and drop-off analysis.
-- **Sessions, Session Replay, Insights, Performance, Errors, and Bots queries** — analytics read endpoints beyond what `Rybbit::users()` exposes (the tunnel forwards session replay *recording*, but nothing here queries it back).
+- **Sessions, Session Replay, Insights, Performance, Errors, and Bots queries** — analytics read endpoints beyond what `Rybbit::users()` and `Rybbit::overview()` expose (the tunnel forwards session replay *recording*, but nothing here queries it back).
 - **Organizations, Teams, Sites, API Keys, and Data Import** — account and site administration endpoints.
 
 We don't plan to cover all of Rybbit's features anytime soon, since this package tracks what we actually need. If you need one of the above (or anything else Rybbit offers), [open an issue](https://github.com/cocosport/rybbit-sdk-for-laravel/issues) describing your use case and we'll add it, or send a pull request — see [Contributing](#contributing).
@@ -190,9 +192,11 @@ Every method returns the decoded JSON response as an `array` (e.g. `['success' =
 Use `Rybbit::users()` to read a site's [users](https://www.rybbit.io/docs/api/users/list) through Rybbit's API — this always requires `RYBBIT_API_KEY`.
 
 ```php
+use Cocosport\Rybbit\Enums\SortOrder;
+use Cocosport\Rybbit\Enums\UserSortBy;
 use Cocosport\Rybbit\Facades\Rybbit;
 
-Rybbit::users()->list(page: 1, pageSize: 25, sortBy: 'pageviews', sortOrder: 'desc');
+Rybbit::users()->list(page: 1, pageSize: 25, sortBy: UserSortBy::Pageviews, sortOrder: SortOrder::Desc);
 
 Rybbit::users()->sessionCount('abc123def456', ['time_zone' => 'America/New_York']);
 
@@ -202,6 +206,28 @@ Rybbit::users()->delete('user@example.com');
 ```
 
 `list()` returns every user for the site, paginated; `sessionCount()` returns a user's daily session counts, keyed by date; `find()` returns one user's full profile — traits, locations, devices, and linked devices; `delete()` removes a user's tracked data from the site. Like the tracking methods above, each returns the decoded JSON response as an `array`, or `null` if the request couldn't reach Rybbit at all — see the linked docs for the exact payload shape.
+
+### Querying overview stats
+
+Use `Rybbit::overview()` to read the configured site's headline stats, time series, live visitor count, and dimension breakdowns through Rybbit's API — this always requires `RYBBIT_API_KEY`.
+
+```php
+use Cocosport\Rybbit\Enums\FilterParameter;
+use Cocosport\Rybbit\Enums\TimeBucket;
+use Cocosport\Rybbit\Facades\Rybbit;
+
+Rybbit::overview()->summary(startDate: '2024-01-01', endDate: '2024-01-31');
+
+Rybbit::overview()->timeSeries(TimeBucket::Day, startDate: '2024-01-01', endDate: '2024-01-31');
+
+Rybbit::overview()->liveVisitors(minutes: 5);
+
+Rybbit::overview()->metric(FilterParameter::Country, limit: 10);
+
+Rybbit::overview()->pageTitles(limit: 10);
+```
+
+`summary()` returns headline KPIs (sessions, pageviews, unique users, bounce rate, ...) for the given range; `timeSeries()` returns the same KPIs bucketed over time — pass `bucket` as `TimeBucket::Day` for a daily-active-users chart (read the `users` field per bucket), or `TimeBucket::Hour`/`Week`/`Month`/`Year` for other granularities; `liveVisitors()` returns the number of unique visitors active right now; `metric()` breaks traffic down by a single `FilterParameter` dimension (`Pathname`, `Country`, `Browser`, `EventName`, ...); `pageTitles()` returns the site's most visited page titles. Omit the date range on `summary()`, `timeSeries()`, and `metric()` to query all time. Like the tracking and user methods above, each returns the decoded JSON response as an `array`, or `null` if the request couldn't reach Rybbit at all.
 
 ### The tunnel
 
@@ -220,6 +246,7 @@ Customize the local path prefix, cache key prefix, and route middleware via `con
 Call `Rybbit::fake()` in your tests to swap in an in-memory fake — no real HTTP requests are made, and every call is recorded for assertions:
 
 ```php
+use Cocosport\Rybbit\Enums\FilterParameter;
 use Cocosport\Rybbit\Facades\Rybbit;
 
 Rybbit::fake();
@@ -241,9 +268,16 @@ Rybbit::assertUsersListed(fn (array $query) => $query['sort_by'] === 'pageviews'
 Rybbit::assertUserRequested('user@example.com');
 Rybbit::assertUserDeleted('user@example.com');
 Rybbit::assertSessionCountRequested('abc123def456');
+
+// overview() side
+Rybbit::assertOverviewRequested();
+Rybbit::assertTimeSeriesRequested(fn (array $query) => $query['bucket'] === 'day');
+Rybbit::assertLiveVisitorsRequested();
+Rybbit::assertMetricRequested(FilterParameter::Country);
+Rybbit::assertPageTitlesRequested();
 ```
 
-Without a stub, faked calls return a sensible default (`['success' => true]` for tracking calls and `delete()`, an empty `data` payload for the other user queries) so code under test that reads the response doesn't have to handle `null`. Pass stubs keyed by symbolic call name (`pageview`, `custom_event`, `performance`, `outbound`, `error`, `users.list`, `users.sessionCount`, `users.find`, `users.delete`) to control what's returned:
+Without a stub, faked calls return a sensible default (`['success' => true]` for tracking calls and `delete()`, an empty `data` payload for the other user and overview queries) so code under test that reads the response doesn't have to handle `null`. Pass stubs keyed by symbolic call name (`pageview`, `custom_event`, `performance`, `outbound`, `error`, `users.list`, `users.sessionCount`, `users.find`, `users.delete`, `overview.summary`, `overview.timeSeries`, `overview.liveVisitors`, `overview.metric`, `overview.pageTitles`) to control what's returned:
 
 ```php
 Rybbit::fake([

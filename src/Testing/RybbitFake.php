@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Cocosport\Rybbit\Testing;
 
 use Closure;
+use Cocosport\Rybbit\Enums\FilterParameter;
+use Cocosport\Rybbit\Overview;
 use Cocosport\Rybbit\Rybbit;
 use Cocosport\Rybbit\SendEvents;
 use Cocosport\Rybbit\Users;
@@ -30,6 +32,11 @@ class RybbitFake extends Rybbit
     public function users(): Users
     {
         return new Users($this->client);
+    }
+
+    public function overview(): Overview
+    {
+        return new Overview($this->client);
     }
 
     public function assertNothingSent(): void
@@ -145,6 +152,62 @@ class RybbitFake extends Rybbit
             && (! $callback || $callback($data)));
 
         PHPUnit::assertNotEmpty($matching, "No session count request for user [{$userId}] was sent to Rybbit.");
+    }
+
+    /**
+     * @param  Closure(array<string, mixed> $query): bool|null  $callback
+     */
+    public function assertOverviewRequested(?Closure $callback = null): void
+    {
+        $matching = $this->matching(fn (string $key, array $data) => $key === 'overview.summary'
+            && (! $callback || $callback($data)));
+
+        PHPUnit::assertNotEmpty($matching, 'No overview request was sent to Rybbit.');
+    }
+
+    /**
+     * @param  Closure(array<string, mixed> $query): bool|null  $callback
+     */
+    public function assertTimeSeriesRequested(?Closure $callback = null): void
+    {
+        $matching = $this->matching(fn (string $key, array $data) => $key === 'overview.timeSeries'
+            && (! $callback || $callback($data)));
+
+        PHPUnit::assertNotEmpty($matching, 'No overview time-series request was sent to Rybbit.');
+    }
+
+    /**
+     * @param  Closure(array<string, mixed> $query): bool|null  $callback
+     */
+    public function assertLiveVisitorsRequested(?Closure $callback = null): void
+    {
+        $matching = $this->matching(fn (string $key, array $data) => $key === 'overview.liveVisitors'
+            && (! $callback || $callback($data)));
+
+        PHPUnit::assertNotEmpty($matching, 'No live visitors request was sent to Rybbit.');
+    }
+
+    /**
+     * @param  Closure(array<string, mixed> $query): bool|null  $callback
+     */
+    public function assertMetricRequested(FilterParameter $parameter, ?Closure $callback = null): void
+    {
+        $matching = $this->matching(fn (string $key, array $data) => $key === 'overview.metric'
+            && ($data['parameter'] ?? null) === $parameter->value
+            && (! $callback || $callback($data)));
+
+        PHPUnit::assertNotEmpty($matching, "No metric request for [{$parameter->value}] was sent to Rybbit.");
+    }
+
+    /**
+     * @param  Closure(array<string, mixed> $query): bool|null  $callback
+     */
+    public function assertPageTitlesRequested(?Closure $callback = null): void
+    {
+        $matching = $this->matching(fn (string $key, array $data) => $key === 'overview.pageTitles'
+            && (! $callback || $callback($data)));
+
+        PHPUnit::assertNotEmpty($matching, 'No page titles request was sent to Rybbit.');
     }
 
     /**

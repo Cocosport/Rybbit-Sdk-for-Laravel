@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use Cocosport\Rybbit\Enums\SortOrder;
+use Cocosport\Rybbit\Enums\UserSortBy;
 use Cocosport\Rybbit\Rybbit;
 use Illuminate\Support\Facades\Http;
 
@@ -19,7 +21,7 @@ it('lists users for the configured site', function () {
         'pageSize' => 10,
     ])]);
 
-    $response = app(Rybbit::class)->users()->list(page: 2, sortBy: 'pageviews', sortOrder: 'asc');
+    $response = app(Rybbit::class)->users()->list(page: 2, sortBy: UserSortBy::Pageviews, sortOrder: SortOrder::Asc);
 
     Http::assertSent(fn ($request) => str_starts_with($request->url(), 'https://app.rybbit.io/api/sites/1/users')
         && $request->method() === 'GET'
